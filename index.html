@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>📋 CV Builder · editable & PDF</title>
+    <title>📋 CV Builder · LaTeX Style</title>
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas for image support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,11 +15,14 @@
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Roboto Slab', 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #f5f5f5;
             padding: 10px;
             min-height: 100vh;
         }
+        
+        /* Import fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Lato:wght@300;400;700&display=swap');
         
         .header {
             display: flex;
@@ -25,16 +30,17 @@
             justify-content: space-between;
             margin: 10px 0 5px;
             padding-bottom: 8px;
-            border-bottom: 3px solid #007bff;
+            border-bottom: 3px solid #4A4A4A;
             flex-wrap: wrap;
             gap: 10px;
         }
         h1 {
             font-size: 24px;
-            color: #333;
+            color: #2E2E2E;
             display: flex;
             align-items: center;
             gap: 5px;
+            font-family: 'Roboto Slab', serif;
         }
         
         .lang-toggle {
@@ -65,6 +71,7 @@
             position: relative;
             border: none;
             background: transparent;
+            font-family: 'Lato', sans-serif;
         }
         .lang-option.active {
             color: white;
@@ -75,10 +82,10 @@
             left: 4px;
             width: calc(50% - 4px);
             height: calc(100% - 8px);
-            background: #007bff;
+            background: #4A4A4A;
             border-radius: 30px;
             transition: transform 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,123,255,0.3);
+            box-shadow: 0 2px 5px rgba(74,74,74,0.3);
             z-index: 1;
         }
         .lang-slider.de {
@@ -90,9 +97,10 @@
         .flag { font-size: 18px; }
 
         .subtitle {
-            color: #666;
+            color: #666666;
             font-size: 14px;
             margin-bottom: 15px;
+            font-family: 'Lato', sans-serif;
         }
 
         .tab-container {
@@ -112,7 +120,7 @@
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            color: #495057;
+            color: #2E2E2E;
             transition: all 0.2s;
             display: flex;
             flex-direction: column;
@@ -121,12 +129,10 @@
             word-break: break-word;
             line-height: 1.2;
             min-height: 60px;
+            font-family: 'Lato', sans-serif;
         }
         .tab-btn span { font-size: 18px; }
-        .tab-btn.active { background: #007bff; color: white; }
-        .tab-btn[data-tab="tab2"].active { background: #28a745; }
-        .tab-btn[data-tab="tab3"].active { background: #dc3545; }
-        .tab-btn[data-tab="tab4"].active { background: #ffc107; color: #333; }
+        .tab-btn.active { background: #4A4A4A; color: white; }
 
         .tab-content {
             display: none;
@@ -138,23 +144,26 @@
         .tab-content.active { display: block; }
 
         h2 {
-            color: #007bff;
+            color: #1E1E1E;
             font-size: 18px;
             margin: 20px 0 12px;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
+            font-family: 'Roboto Slab', serif;
+            font-weight: 700;
         }
         h2:first-child { margin-top: 0; }
         .badge {
             background: #e7f3ff;
-            color: #007bff;
+            color: #4A4A4A;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
             white-space: nowrap;
+            font-family: 'Lato', sans-serif;
         }
 
         .sentence-grid {
@@ -170,7 +179,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #4A4A4A;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .sentence-content {
@@ -183,17 +192,17 @@
             flex: 1;
             font-size: 14px;
             line-height: 1.5;
-            color: #333;
+            color: #2E2E2E;
             padding: 8px;
             background: white;
-            border: 1px solid #ddd;
+            border: 1px solid #CCCCCC;
             border-radius: 6px;
             resize: vertical;
             min-height: 60px;
-            font-family: inherit;
+            font-family: 'Lato', sans-serif;
         }
         .sentence-text:focus {
-            outline: 2px solid #007bff;
+            outline: 2px solid #4A4A4A;
             border-color: transparent;
         }
         .button-group {
@@ -203,7 +212,7 @@
             justify-content: flex-end;
         }
         .add-btn {
-            background: #28a745;
+            background: #4A4A4A;
             color: white;
             border: none;
             border-radius: 20px;
@@ -213,18 +222,19 @@
             font-weight: 600;
             min-width: 70px;
             transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(40,167,69,0.3);
+            box-shadow: 0 2px 4px rgba(74,74,74,0.3);
+            font-family: 'Lato', sans-serif;
         }
         .add-btn:active {
             transform: scale(0.95);
-            background: #1e7e34;
+            background: #1E1E1E;
         }
         .add-btn.added {
-            background: #ffc107;
-            color: #333;
+            background: #CCCCCC;
+            color: #1E1E1E;
         }
         .reset-btn {
-            background: #6c757d;
+            background: #666666;
             color: white;
             border: none;
             border-radius: 20px;
@@ -234,10 +244,11 @@
             font-weight: 600;
             min-width: 70px;
             transition: all 0.2s;
+            font-family: 'Lato', sans-serif;
         }
         .reset-btn:active {
             transform: scale(0.95);
-            background: #5a6268;
+            background: #2E2E2E;
         }
 
         .quick-actions {
@@ -249,19 +260,20 @@
         }
         .action-btn {
             background: white;
-            border: 1px solid #ddd;
+            border: 1px solid #CCCCCC;
             border-radius: 20px;
             padding: 8px 15px;
             font-size: 13px;
-            color: #666;
+            color: #2E2E2E;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
+            font-family: 'Lato', sans-serif;
         }
         .action-btn:active { background: #f0f0f0; }
         .action-btn.primary {
-            background: #007bff;
+            background: #4A4A4A;
             color: white;
             border: none;
         }
@@ -298,7 +310,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #4A4A4A;
         }
         .cart-item-content {
             display: flex;
@@ -311,18 +323,18 @@
             font-size: 14px;
             padding: 8px;
             background: white;
-            border: 1px solid #ddd;
+            border: 1px solid #CCCCCC;
             border-radius: 6px;
             resize: vertical;
             min-height: 60px;
-            font-family: inherit;
+            font-family: 'Lato', sans-serif;
         }
         .cart-item-text:focus {
-            outline: 2px solid #007bff;
+            outline: 2px solid #4A4A4A;
             border-color: transparent;
         }
         .remove-btn {
-            background: #dc3545;
+            background: #666666;
             color: white;
             border: none;
             border-radius: 20px;
@@ -330,6 +342,7 @@
             font-size: 12px;
             cursor: pointer;
             white-space: nowrap;
+            font-family: 'Lato', sans-serif;
         }
         .cart-footer {
             display: flex;
@@ -338,11 +351,160 @@
             flex-wrap: wrap;
         }
 
+        /* CV Preview Styles - matches LaTeX exactly */
+        .cv-preview {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-family: 'Lato', sans-serif;
+            display: none;
+        }
+        
+        .cv-preview.active {
+            display: block;
+        }
+        
+        .cv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #CCCCCC;
+            padding-bottom: 20px;
+        }
+        
+        .cv-name-title h1 {
+            font-family: 'Roboto Slab', serif;
+            font-size: 32px;
+            color: #000000;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .cv-name-title h2 {
+            font-family: 'Lato', sans-serif;
+            font-size: 16px;
+            color: #4A4A4A;
+            margin: 5px 0 0 0;
+            font-weight: 400;
+        }
+        
+        .cv-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #CCCCCC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666666;
+            font-size: 12px;
+            border: 3px solid #4A4A4A;
+        }
+        
+        .cv-contact {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4A4A4A;
+            font-size: 14px;
+            color: #2E2E2E;
+        }
+        
+        .cv-section {
+            margin-bottom: 25px;
+        }
+        
+        .cv-section-title {
+            font-family: 'Roboto Slab', serif;
+            font-size: 20px;
+            color: #1E1E1E;
+            border-bottom: 2px solid #CCCCCC;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .cv-item {
+            margin-bottom: 15px;
+        }
+        
+        .cv-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+        
+        .cv-item-title {
+            font-weight: 700;
+            color: #2E2E2E;
+            font-size: 16px;
+        }
+        
+        .cv-item-subtitle {
+            color: #4A4A4A;
+            font-style: italic;
+            font-size: 14px;
+        }
+        
+        .cv-item-date {
+            color: #666666;
+            font-size: 14px;
+        }
+        
+        .cv-item-location {
+            color: #666666;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        
+        .cv-item-description {
+            margin-top: 5px;
+            padding-left: 20px;
+            color: #2E2E2E;
+            font-size: 14px;
+        }
+        
+        .cv-item-description ul {
+            list-style-type: none;
+        }
+        
+        .cv-item-description li {
+            margin-bottom: 3px;
+            position: relative;
+        }
+        
+        .cv-item-description li:before {
+            content: "•";
+            color: #4A4A4A;
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        }
+        
+        .cv-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .cv-tag {
+            background: #f0f0f0;
+            color: #2E2E2E;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #CCCCCC;
+        }
+
         .footer-note {
             text-align: center;
             margin-top: 20px;
-            color: #999;
+            color: #666666;
             font-size: 12px;
+            font-family: 'Lato', sans-serif;
         }
 
         @media (max-width: 380px) {
@@ -356,7 +518,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>📋 CV Builder <span style="font-size: 14px; color: #666;">(editable)</span></h1>
+        <h1>📋 CV Builder · LaTeX Style</h1>
         <div class="lang-toggle" id="langToggle">
             <div class="lang-slider en" id="langSlider"></div>
             <button class="lang-option active" onclick="setLanguage('en')" id="langEn"><span class="flag">🇬🇧</span> EN</button>
@@ -364,7 +526,7 @@
         </div>
     </div>
     
-    <div class="subtitle" id="subtitle">Edit sentences • Add to cart • Next → download CV-style PDF</div>
+    <div class="subtitle" id="subtitle">Edit sentences • Add to cart • Preview CV → download PDF</div>
 
     <div class="tab-container" id="tabContainer">
         <div class="tabs">
@@ -374,44 +536,31 @@
             <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4"><span>📝</span> <span class="tab-text" data-en="Generic" data-de="Allg">Generic</span></button>
         </div>
 
-        <!-- Tab1 Dev -->
+        <!-- Tab1 Work Experience -->
         <div id="tab1" class="tab-content active">
-            <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
+            <h2><span class="section-icon">💼</span> <span class="section-title" data-en="Work Experience" data-de="Berufserfahrung">Work Experience</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card" data-tab="tab1" data-section="Professional Summary">
+                <div class="sentence-card" data-section="Work Experience">
                     <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects." data-de="Senior Full-Stack-Entwickler mit 7+ Jahren Erfahrung in der Entwicklung skalierbarer Webanwendungen mit Python, Django und React. Leitete Teams von 5+ Entwicklern und lieferte 15+ erfolgreiche Projekte ab.">Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects.</textarea>
+                        <textarea class="sentence-text" data-en="Automated scripting using Python Beta API(PyAEDT)" data-de="Automatisierte Skripterstellung mit Python Beta API (PyAEDT)">Automated scripting using Python Beta API(PyAEDT)</textarea>
                     </div>
                     <div class="button-group">
                         <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
                         <button class="add-btn" onclick="addToCart(this)">Add</button>
                     </div>
                 </div>
-                <div class="sentence-card" data-tab="tab1" data-section="Professional Summary">
+                <div class="sentence-card" data-section="Work Experience">
                     <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%." data-de="Ergebnisorientierter Softwareentwickler mit Spezialisierung auf Cloud-Architektur und Microservices. AWS-zertifiziert mit nachgewiesener Erfolgsbilanz bei der Optimierung der Systemleistung und Senkung der Kosten um 40%.">Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%.</textarea>
+                        <textarea class="sentence-text" data-en="Python Tkinter GUI development for Motor design." data-de="Python Tkinter GUI-Entwicklung für Motordesign.">Python Tkinter GUI development for Motor design.</textarea>
                     </div>
                     <div class="button-group">
                         <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
                         <button class="add-btn" onclick="addToCart(this)">Add</button>
                     </div>
                 </div>
-            </div>
-
-            <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Technical Achievements" data-de="Technische Erfolge">Technical Achievements</span> <span class="badge" data-en="Under Experience" data-de="Bei Erfahrung">Under Experience</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card" data-tab="tab1" data-section="Technical Achievements">
+                <div class="sentence-card" data-section="Work Experience">
                     <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%." data-de="Architektur und Bereitstellung von Microservices mit Docker und Kubernetes, Verbesserung der Skalierbarkeit und Reduzierung der Bereitstellungszeit um 70%.">Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%.</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-tab="tab1" data-section="Technical Achievements">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms." data-de="Optimierte PostgreSQL-Abfragen und implementierte Redis-Caching, Reduzierung der durchschnittlichen API-Antwortzeit von 500ms auf 50ms.">Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms.</textarea>
+                        <textarea class="sentence-text" data-en="Supporting electromagnetic and thermal analysis of electrical machines using Ansys CAD Electronic Desktop and MATLAB." data-de="Unterstützung bei elektromagnetischer und thermischer Analyse elektrischer Maschinen mit Ansys CAD Electronic Desktop und MATLAB.">Supporting electromagnetic and thermal analysis of electrical machines using Ansys CAD Electronic Desktop and MATLAB.</textarea>
                     </div>
                     <div class="button-group">
                         <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
@@ -421,13 +570,22 @@
             </div>
         </div>
 
-        <!-- Tab2 Management (abbreviated) -->
+        <!-- Tab2 Education -->
         <div id="tab2" class="tab-content">
-            <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
+            <h2><span class="section-icon">🎓</span> <span class="section-title" data-en="Education" data-de="Ausbildung">Education</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card" data-tab="tab2" data-section="Professional Summary">
+                <div class="sentence-card" data-section="Education">
                     <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified." data-de="Erfahrener technischer Projektmanager mit 8+ Jahren Führung von funktionsübergreifenden Teams zur termingerechten und budgetgerechten Lieferung komplexer Softwareprojekte. PMP- und Scrum-Master-zertifiziert.">Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified.</textarea>
+                        <textarea class="sentence-text" data-en="Design and Implementation of Universal Biquad Filter for analog and mixed signal systems" data-de="Entwurf und Implementierung eines universellen Biquad-Filters für analoge und Mixed-Signal-Systeme">Design and Implementation of Universal Biquad Filter for analog and mixed signal systems</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
+                </div>
+                <div class="sentence-card" data-section="Education">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Modelling and Design of PCB in Altium Designer, KiCAD" data-de="Modellierung und Design von PCBs in Altium Designer, KiCAD">Modelling and Design of PCB in Altium Designer, KiCAD</textarea>
                     </div>
                     <div class="button-group">
                         <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
@@ -437,13 +595,22 @@
             </div>
         </div>
 
-        <!-- Tab3 Design -->
+        <!-- Tab3 Projects -->
         <div id="tab3" class="tab-content">
-            <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
+            <h2><span class="section-icon">🚀</span> <span class="section-title" data-en="Projects" data-de="Projekte">Projects</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card" data-tab="tab3" data-section="Professional Summary">
+                <div class="sentence-card" data-section="Projects">
                     <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies." data-de="Kreativer UI/UX-Designer mit 6 Jahren Erfahrung in der Gestaltung intuitiver digitaler Erlebnisse. Portfolio umfasst 20+ erfolgreiche Produkteinführungen für Fortune-500-Unternehmen.">Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies.</textarea>
+                        <textarea class="sentence-text" data-en="Hosting Personal website on Github domain: ryanromeodev.github.io/personal-site/" data-de="Persönliche Website auf Github-Domain hosten: ryanromeodev.github.io/personal-site/">Hosting Personal website on Github domain: ryanromeodev.github.io/personal-site/</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
+                </div>
+                <div class="sentence-card" data-section="Projects">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Developed Android Dart/Flutter Application for plant inventory management" data-de="Entwicklung einer Android Dart/Flutter-Anwendung für Pflanzeninventarverwaltung">Developed Android Dart/Flutter Application for plant inventory management</textarea>
                     </div>
                     <div class="button-group">
                         <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
@@ -453,13 +620,31 @@
             </div>
         </div>
 
-        <!-- Tab4 Generic -->
+        <!-- Tab4 Skills & Languages -->
         <div id="tab4" class="tab-content">
-            <h2><span class="section-icon">🎓</span> <span class="section-title" data-en="Education" data-de="Ausbildung">Education</span> <span class="badge" data-en="Always relevant" data-de="Immer relevant">Always relevant</span></h2>
+            <h2><span class="section-icon">⚡</span> <span class="section-title" data-en="Skills & Languages" data-de="Fähigkeiten & Sprachen">Skills & Languages</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card" data-tab="tab4" data-section="Education">
+                <div class="sentence-card" data-section="Skills">
                     <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA." data-de="Bachelor of Science in Informatik, Universitätsname, 2020. Abschluss Magna Cum Laude mit 3,8 GPA.">Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA.</textarea>
+                        <textarea class="sentence-text" data-en="Python, C++, Dart, Java, React" data-de="Python, C++, Dart, Java, React">Python, C++, Dart, Java, React</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
+                </div>
+                <div class="sentence-card" data-section="Languages">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="English - Fluent" data-de="Englisch - Fließend">English - Fluent</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
+                </div>
+                <div class="sentence-card" data-section="Languages">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="German - Professional (B2/C1)" data-de="Deutsch - Verhandlungssicher (B2/C1)">German - Professional (B2/C1)</textarea>
                     </div>
                     <div class="button-group">
                         <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
@@ -493,15 +678,45 @@
         <div id="cartItemsContainer"></div>
         <div class="cart-footer">
             <button class="action-btn" onclick="clearCart()"><span>🗑️</span> <span data-en="Clear cart" data-de="Leeren">Clear cart</span></button>
-            <button class="action-btn primary" onclick="downloadPDF()"><span>📄</span> <span data-en="Download CV (PDF)" data-de="CV als PDF">Download CV (PDF)</span></button>
+            <button class="action-btn primary" onclick="generateAndDownloadPDF()"><span>📄</span> <span data-en="Download CV (PDF)" data-de="CV als PDF">Download CV (PDF)</span></button>
+            <button class="action-btn" onclick="previewCV()"><span>👁️</span> <span data-en="Preview CV" data-de="CV Vorschau">Preview CV</span></button>
         </div>
-        <div class="footer-note" style="margin-top:15px;" data-en="Edit any sentence • PDF will be formatted as a professional CV" data-de="Bearbeite Sätze • PDF wird als professioneller CV formatiert">Edit any sentence • PDF will be formatted as a professional CV</div>
+        <div class="footer-note" style="margin-top:15px;" data-en="Edit any sentence • CV includes fixed personal details with photo" data-de="Bearbeite Sätze • CV enthält feste persönliche Daten mit Foto">Edit any sentence • CV includes fixed personal details with photo</div>
     </div>
 
-    <div class="footer-note" id="mainFooter" data-en="Edit • Add to cart • Next → download CV-style PDF" data-de="Bearbeiten • Hinzufügen • Weiter → CV als PDF">Edit • Add to cart • Next → download CV-style PDF</div>
+    <!-- CV Preview Section -->
+    <div id="cvPreview" class="cv-preview">
+        <div class="cv-header">
+            <div class="cv-name-title">
+                <h1>Ryan Romeo</h1>
+                <h2>Electronics and Computer Science Engineer</h2>
+            </div>
+            <div class="cv-photo" id="photoPlaceholder">
+                <span>📷 Photo</span>
+            </div>
+        </div>
+        
+        <div class="cv-contact">
+            <span style="margin-right: 20px;">📧 ryanromeo10@gmail.com</span>
+            <span style="margin-right: 20px;">📞 (+49) 15 212 669675</span>
+            <span>📍 Luisental 29B, Bremen, 28359 Germany</span>
+        </div>
+        
+        <div id="cvContent"></div>
+    </div>
+
+    <div class="footer-note" id="mainFooter" data-en="Edit • Add to cart • Preview → download CV with photo" data-de="Bearbeiten • Hinzufügen • Vorschau → CV mit Foto">Edit • Add to cart • Preview → download CV with photo</div>
 
     <script>
-        // ---------- CART (stores objects with text, tab, section) ----------
+        // Fixed personal details (exactly as in LaTeX)
+        const FIXED_DETAILS = {
+            name: "Ryan Romeo",
+            title: "Electronics and Computer Science Engineer",
+            email: "ryanromeo10@gmail.com",
+            phone: "(+49) 15 212 669675",
+            address: "Luisental 29B, Bremen, 28359 Germany"
+        };
+
         let cart = [];
 
         function updateCartUI() {
@@ -515,12 +730,10 @@
             const card = button.closest('.sentence-card');
             const textarea = card.querySelector('.sentence-text');
             const sentence = textarea.value;
-            const tab = card.dataset.tab;
             const section = card.dataset.section;
             
             cart.push({ 
                 text: sentence,
-                tab: tab,
                 section: section
             });
             
@@ -561,7 +774,7 @@
                         <button class="remove-btn" onclick="removeFromCart(${idx})">${currentLanguage === 'en' ? 'Remove' : 'Entfernen'}</button>
                     </div>
                     <div style="font-size:11px; color:#666; padding-left:8px;">
-                        ${item.section} (${item.tab})
+                        ${item.section}
                     </div>
                 </div>`;
             });
@@ -589,90 +802,116 @@
         function showCartView() {
             document.getElementById('tabContainer').style.display = 'none';
             document.getElementById('cartView').classList.add('active');
+            document.getElementById('cvPreview').classList.remove('active');
             renderCartItems();
         }
 
         function hideCartView() {
             document.getElementById('tabContainer').style.display = 'block';
             document.getElementById('cartView').classList.remove('active');
+            document.getElementById('cvPreview').classList.remove('active');
         }
 
-        // ---------- PDF generation (CV style) ----------
-        function downloadPDF() {
+        function previewCV() {
+            const cvContent = document.getElementById('cvContent');
+            const grouped = {};
+            
+            cart.forEach(item => {
+                if (!grouped[item.section]) grouped[item.section] = [];
+                grouped[item.section].push(item.text);
+            });
+
+            let html = '';
+            for (let section in grouped) {
+                html += `<div class="cv-section">
+                    <div class="cv-section-title">${section}</div>`;
+                
+                grouped[section].forEach((sentence, index) => {
+                    if (section === 'Work Experience' || section === 'Education') {
+                        // Format as job/education entries
+                        html += `<div class="cv-item">
+                            <div class="cv-item-header">
+                                <span class="cv-item-title">Position ${index + 1}</span>
+                                <span class="cv-item-date">2024</span>
+                            </div>
+                            <div class="cv-item-subtitle">Company Name</div>
+                            <div class="cv-item-description">
+                                <ul><li>${sentence}</li></ul>
+                            </div>
+                        </div>`;
+                    } else if (section === 'Skills') {
+                        html += `<div class="cv-tags"><span class="cv-tag">${sentence}</span></div>`;
+                    } else if (section === 'Languages') {
+                        html += `<div class="cv-item">
+                            <div class="cv-item-description">
+                                <ul><li>${sentence}</li></ul>
+                            </div>
+                        </div>`;
+                    } else {
+                        html += `<div class="cv-item">
+                            <div class="cv-item-description">
+                                <ul><li>${sentence}</li></ul>
+                            </div>
+                        </div>`;
+                    }
+                });
+                
+                html += `</div>`;
+            }
+
+            cvContent.innerHTML = html;
+            document.getElementById('cvPreview').classList.add('active');
+        }
+
+        async function generateAndDownloadPDF() {
             if (cart.length === 0) {
                 alert(currentLanguage === 'en' ? 'Cart is empty. Add some sentences first.' : 'Warenkorb ist leer. Füge zuerst Sätze hinzu.');
                 return;
             }
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            // First show the preview with current cart
+            previewCV();
             
-            // Helper to add text with wrapping
-            function addWrappedText(text, x, y, maxWidth, lineHeight) {
-                const lines = doc.splitTextToSize(text, maxWidth);
-                doc.text(lines, x, y);
-                return lines.length * lineHeight;
-            }
-
-            // CV Header
-            doc.setFontSize(22);
-            doc.setTextColor(0, 51, 102);
-            doc.text(currentLanguage === 'en' ? 'CURRICULUM VITAE' : 'LEBENSLAUF', 20, 20);
+            const cvPreview = document.getElementById('cvPreview');
             
-            doc.setFontSize(12);
-            doc.setTextColor(100);
-            doc.text(currentLanguage === 'en' ? 'Your Name' : 'Ihr Name', 20, 30);
-            doc.text(currentLanguage === 'en' ? 'email@example.com · +49 123 456789' : 'email@example.com · +49 123 456789', 20, 36);
-            
-            let yPos = 50;
-            const leftMargin = 20;
-            const rightMargin = 190;
-            const maxWidth = 170;
-            const lineHeight = 7;
-
-            // Group cart items by section (preserve order, but group same sections)
-            const grouped = {};
-            cart.forEach(item => {
-                const key = item.section;
-                if (!grouped[key]) grouped[key] = [];
-                grouped[key].push(item.text);
-            });
-
-            // Loop through sections
-            for (let section in grouped) {
-                // Section title
-                doc.setFontSize(14);
-                doc.setTextColor(0, 123, 255);
-                doc.setFont(undefined, 'bold');
-                doc.text(section, leftMargin, yPos);
-                yPos += lineHeight + 2;
-                
-                doc.setFont(undefined, 'normal');
-                doc.setFontSize(11);
-                doc.setTextColor(50);
-                
-                // Section sentences
-                grouped[section].forEach(sentence => {
-                    if (yPos > 270) { // page break
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    const used = addWrappedText('• ' + sentence, leftMargin + 3, yPos, maxWidth - 5, lineHeight);
-                    yPos += used + 2;
+            try {
+                // Use html2canvas to capture the CV preview
+                const canvas = await html2canvas(cvPreview, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true
                 });
                 
-                yPos += 4; // extra space between sections
+                const imgData = canvas.toDataURL('image/png');
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: 'a4'
+                });
+                
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                
+                // Calculate image dimensions to fit PDF
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const width = imgWidth * ratio;
+                const height = imgHeight * ratio;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+                pdf.save('ryan_romeo_cv.pdf');
+                
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                alert('Error generating PDF. Please try again.');
             }
-
-            // Footer
-            doc.setFontSize(10);
-            doc.setTextColor(150);
-            doc.text(currentLanguage === 'en' ? 'Generated with CV Builder' : 'Erstellt mit CV Builder', 20, 285);
-            
-            doc.save('my_cv.pdf');
         }
 
-        // ---------- LANGUAGE ----------
         let currentLanguage = 'en';
 
         function setLanguage(lang) {
@@ -718,9 +957,9 @@
             });
             
             const footer = document.getElementById('mainFooter');
-            footer.innerText = lang === 'en' ? 'Edit • Add to cart • Next → download CV-style PDF' : 'Bearbeiten • Hinzufügen • Weiter → CV als PDF';
+            footer.innerText = lang === 'en' ? 'Edit • Add to cart • Preview → download CV with photo' : 'Bearbeiten • Hinzufügen • Vorschau → CV mit Foto';
             
-            document.getElementById('subtitle').innerText = lang === 'en' ? 'Edit sentences • Add to cart • Next → download CV-style PDF' : 'Sätze bearbeiten • Hinzufügen • Weiter → CV als PDF';
+            document.getElementById('subtitle').innerText = lang === 'en' ? 'Edit sentences • Add to cart • Preview CV → download PDF' : 'Sätze bearbeiten • Hinzufügen • CV Vorschau → PDF';
         }
 
         function switchTab(tabId) {
