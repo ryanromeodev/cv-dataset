@@ -1231,25 +1231,33 @@
                 const pdfHeight = pdf.internal.pageSize.getHeight(); // 841.89 pt
                 
                 // Define a consistent margin (in points)
-                const margin = 1; // 15pt ≈ 5.3mm – adjust to your liking
-                
+                const margin = 15; // Set this to whatever small margin you prefer
+
                 // Maximum available width/height after margins
                 const maxWidth = pdfWidth - 2 * margin;
                 const maxHeight = pdfHeight - 2 * margin;
-                
-                // Calculate scale to fit within the available area while preserving aspect ratio
-                const scale = Math.min(maxWidth / canvas.width, maxHeight / canvas.height);
-                
+
+                // Force the scale to fit the WIDTH of the page perfectly
+                const scale = maxWidth / canvas.width;
+
                 const scaledWidth = canvas.width * scale;
                 const scaledHeight = canvas.height * scale;
-                
-                // Center the image horizontally and top-align vertically for better CV look
-                const xOffset = (pdfWidth - scaledWidth) / 2;
-                const yOffset = margin;
-                
-                // Add the image to the PDF
-                pdf.addImage(imgData, 'PNG', xOffset, yOffset, scaledWidth, scaledHeight);
-                
+
+                let heightLeft = scaledHeight;
+                let position = margin; // Starting Y position
+
+                // Add the first page
+                pdf.addImage(imgData, 'PNG', margin, position, scaledWidth, scaledHeight);
+                heightLeft -= maxHeight;
+
+                // Automatically add new pages if the CV content is longer than one page
+                while (heightLeft > 0) {
+                    position -= maxHeight; // Shift the image up for the next page
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', margin, position, scaledWidth, scaledHeight);
+                    heightLeft -= maxHeight;
+                }
+
                 const filename = `ryan_${jobRole.replace(/\s+/g, '_')}_CV.pdf`;
                 pdf.save(filename);
                 
