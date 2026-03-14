@@ -1168,7 +1168,6 @@
                 const imgData = canvas.toDataURL('image/png');
                 
                 const { jsPDF } = window.jspdf;
-                // Use 'pt' units for precise A4 size (595.28 x 841.89)
                 const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'pt',
@@ -1178,22 +1177,25 @@
                 const pdfWidth = pdf.internal.pageSize.getWidth();   // 595.28 pt
                 const pdfHeight = pdf.internal.pageSize.getHeight(); // 841.89 pt
                 
-                // Calculate image dimensions to fit the full width, preserve aspect ratio
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                const ratio = pdfWidth / imgWidth;        // scale to fit width exactly
-                const width = pdfWidth;
-                const height = imgHeight * ratio;
+                // Define a consistent margin (in points)
+                const margin = 15; // 15pt ≈ 5.3mm – adjust to your liking
                 
-                // If height exceeds page, scale down (shouldn't happen with 800px preview)
-                if (height > pdfHeight) {
-                    const altRatio = pdfHeight / imgHeight;
-                    const scaledWidth = imgWidth * altRatio;
-                    const xOffset = (pdfWidth - scaledWidth) / 2;   // center horizontally
-                    pdf.addImage(imgData, 'PNG', xOffset, 0, scaledWidth, pdfHeight);
-                } else {
-                    pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-                }
+                // Maximum available width/height after margins
+                const maxWidth = pdfWidth - 2 * margin;
+                const maxHeight = pdfHeight - 2 * margin;
+                
+                // Calculate scale to fit within the available area while preserving aspect ratio
+                const scale = Math.min(maxWidth / canvas.width, maxHeight / canvas.height);
+                
+                const scaledWidth = canvas.width * scale;
+                const scaledHeight = canvas.height * scale;
+                
+                // Center the image horizontally and vertically
+                const xOffset = (pdfWidth - scaledWidth) / 2;
+                const yOffset = (pdfHeight - scaledHeight) / 2;
+                
+                // Add the image to the PDF
+                pdf.addImage(imgData, 'PNG', xOffset, yOffset, scaledWidth, scaledHeight);
                 
                 const filename = `ryan_${jobRole.replace(/\s+/g, '_')}_CV.pdf`;
                 pdf.save(filename);
