@@ -411,13 +411,13 @@
         .cv-preview {
             background: white;
             padding: 40px;
-            margin: 30px 0;
+            margin: 30px auto;        /* center horizontally */
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             font-family: 'Lato', 'Arial', sans-serif;
             display: none;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 800px;              /* fixed width to match PDF */
+            max-width: 100%;
+            box-sizing: border-box;
             filter: grayscale(100%);
         }
         
@@ -437,7 +437,9 @@
         .cv-name-title h1 {
             font-family: 'Times New Roman', serif;
             font-size: 36px;
-            color: #000;
+            color: #000000 !important;
+            background: none !important;
+            -webkit-text-fill-color: #000000 !important;  /* override gradient */
             margin: 0;
             padding: 0;
             font-weight: 700;
@@ -1038,10 +1040,10 @@
                 }
                 
                 if (item.parentId) {
-                    // This bullet belongs to a job/degree
-                    const jobId = item.parentId;
-                    if (!sections[section].jobs[jobId]) {
-                        sections[section].jobs[jobId] = {
+                    // Bullet belongs to a parent (job/degree/project)
+                    const parentId = item.parentId;
+                    if (!sections[section].jobs[parentId]) {
+                        sections[section].jobs[parentId] = {
                             titleEn: item.parentTitleEn,
                             titleDe: item.parentTitleDe,
                             companyEn: item.companyEn,
@@ -1053,9 +1055,9 @@
                             bullets: []
                         };
                     }
-                    sections[section].jobs[jobId].bullets.push(item.text);
+                    sections[section].jobs[parentId].bullets.push(item.text);
                 } else {
-                    // Standalone item (skills, languages, projects without parent)
+                    // Standalone item (skills, languages)
                     sections[section].items.push(item.text);
                 }
             });
@@ -1072,7 +1074,7 @@
                     <div class="cv-section-title">${section}</div>`;
                 
                 if (section === 'Work Experience' || section === 'Education') {
-                    // For each job/degree in this section
+                    // Standard job/education display with company, date, location
                     const jobs = sections[section].jobs;
                     for (let jobId in jobs) {
                         const job = jobs[jobId];
@@ -1094,13 +1096,39 @@
                         });
                         html += `</ul></div></div>`;
                     }
+                } else if (section === 'Projects') {
+                    // Projects: display title + bullets (no company/date/location)
+                    const projects = sections[section].jobs;
+                    for (let projId in projects) {
+                        const project = projects[projId];
+                        const title = currentLanguage === 'en' ? project.titleEn : project.titleDe;
+                        
+                        html += `<div class="cv-item">
+                            <div class="cv-item-header">
+                                <span class="cv-item-title">${title || 'Project'}</span>
+                            </div>
+                            <div class="cv-item-description">
+                                <ul>`;
+                        project.bullets.forEach(bullet => {
+                            html += `<li>${bullet}</li>`;
+                        });
+                        html += `</ul></div></div>`;
+                    }
+                    // Also include any standalone project items (if any were added without parent)
+                    if (sections[section].items.length > 0) {
+                        html += `<div class="cv-item"><div class="cv-item-description"><ul>`;
+                        sections[section].items.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += `</ul></div></div>`;
+                    }
                 } else if (section === 'Skills') {
                     // Skills as tags
                     sections[section].items.forEach(item => {
                         html += `<div class="cv-tags"><span class="cv-tag">${item}</span></div>`;
                     });
                 } else {
-                    // Projects, Languages as bullet list
+                    // Languages (or any other) as bullet list
                     html += `<div class="cv-item"><div class="cv-item-description"><ul>`;
                     sections[section].items.forEach(item => {
                         html += `<li>${item}</li>`;
@@ -1130,7 +1158,7 @@
             
             try {
                 const canvas = await html2canvas(cvPreview, {
-                    scale: 2,
+                    scale: 2,                // higher resolution
                     backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
@@ -1140,22 +1168,32 @@
                 const imgData = canvas.toDataURL('image/png');
                 
                 const { jsPDF } = window.jspdf;
+                // Use 'pt' units for precise A4 size (595.28 x 841.89)
                 const pdf = new jsPDF({
                     orientation: 'portrait',
-                    unit: 'px',
+                    unit: 'pt',
                     format: 'a4'
                 });
                 
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const pdfWidth = pdf.internal.pageSize.getWidth();   // 595.28 pt
+                const pdfHeight = pdf.internal.pageSize.getHeight(); // 841.89 pt
                 
+                // Calculate image dimensions to fit the full width, preserve aspect ratio
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
-                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-                const width = imgWidth * ratio;
+                const ratio = pdfWidth / imgWidth;        // scale to fit width exactly
+                const width = pdfWidth;
                 const height = imgHeight * ratio;
                 
-                pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+                // If height exceeds page, scale down (shouldn't happen with 800px preview)
+                if (height > pdfHeight) {
+                    const altRatio = pdfHeight / imgHeight;
+                    const scaledWidth = imgWidth * altRatio;
+                    const xOffset = (pdfWidth - scaledWidth) / 2;   // center horizontally
+                    pdf.addImage(imgData, 'PNG', xOffset, 0, scaledWidth, pdfHeight);
+                } else {
+                    pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+                }
                 
                 const filename = `ryan_${jobRole.replace(/\s+/g, '_')}_CV.pdf`;
                 pdf.save(filename);
