@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>📋 CV Builder · Structured Data</title>
-    <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- html2canvas for image support -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
@@ -590,7 +588,6 @@
             </div>
         </div>
         
-        <!-- Job Role Input - Editable -->
         <div class="job-role-container">
             <label class="job-role-label" data-en="Job Role / Title" data-de="Berufsbezeichnung">Job Role / Title</label>
             <input type="text" id="jobRoleInput" class="job-role-input" placeholder="e.g., Electronics Engineer, Software Developer..." value="Electronics Engineer">
@@ -609,7 +606,6 @@
                 <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4"><span>⚡</span> <span class="tab-text" data-en="Skills" data-de="Fähigkeiten">Skills</span></button>
             </div>
 
-            <!-- Tab contents will be dynamically populated by JavaScript -->
             <div id="tab1" class="tab-content active"></div>
             <div id="tab2" class="tab-content"></div>
             <div id="tab3" class="tab-content"></div>
@@ -623,7 +619,6 @@
             <button class="action-btn" onclick="clearCart()">
                 <span>🗑️</span> <span data-en="Clear cart" data-de="Warenkorb leeren">Clear cart</span>
             </button>
-            <!-- ADD ALL BUTTON -->
             <button class="action-btn" onclick="addAllToCart()">
                 <span>➕</span> <span data-en="Add all" data-de="Alle hinzufügen">Add all</span>
             </button>
@@ -649,7 +644,6 @@
             <div class="footer-note" style="color:#666; margin-top:15px;" data-en="Edit any sentence • CV will be black & white with proper titles" data-de="Bearbeite Sätze • CV wird schwarz-weiß mit richtigen Titeln">Edit any sentence • CV will be black & white with proper titles</div>
         </div>
 
-        <!-- Black & White CV Preview -->
         <div id="cvPreview" class="cv-preview">
             <div class="cv-header">
                 <div class="cv-name-title">
@@ -1206,12 +1200,22 @@
             const cvPreview = document.getElementById('cvPreview');
             
             try {
+                // Ensure desktop aspect ratio is maintained during PDF generation on mobile
                 const canvas = await html2canvas(cvPreview, {
                     scale: 2,                // higher resolution
                     backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
-                    useCORS: true
+                    useCORS: true,
+                    windowWidth: 800,        // help with rendering bounds
+                    onclone: function(clonedDoc) {
+                        const el = clonedDoc.getElementById('cvPreview');
+                        if (el) {
+                            // Removing the max-width and enforcing 800px width stops the "squishing" effect
+                            el.style.width = '800px';
+                            el.style.maxWidth = 'none';
+                        }
+                    }
                 });
                 
                 const imgData = canvas.toDataURL('image/png');
@@ -1239,9 +1243,9 @@
                 const scaledWidth = canvas.width * scale;
                 const scaledHeight = canvas.height * scale;
                 
-                // Center the image horizontally and vertically
+                // Center the image horizontally and top-align vertically for better CV look
                 const xOffset = (pdfWidth - scaledWidth) / 2;
-                const yOffset = (pdfHeight - scaledHeight) / 2;
+                const yOffset = margin;
                 
                 // Add the image to the PDF
                 pdf.addImage(imgData, 'PNG', xOffset, yOffset, scaledWidth, scaledHeight);
