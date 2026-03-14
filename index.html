@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>📋 CV Sentence Bank</title>
+    <title>📋 CV Sentence Bank | DE/EN</title>
     <style>
         * {
             margin: 0;
@@ -17,14 +17,82 @@
             min-height: 100vh;
         }
         
-        /* Header */
-        h1 {
-            font-size: 24px;
-            color: #333;
+        /* Header with Language Toggle */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin: 10px 0 5px;
             padding-bottom: 8px;
             border-bottom: 3px solid #007bff;
+            flex-wrap: wrap;
+            gap: 10px;
         }
+        h1 {
+            font-size: 24px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Beautiful Language Toggle Switch */
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            background: #e9ecef;
+            border-radius: 40px;
+            padding: 4px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+            width: 140px;
+            height: 44px;
+        }
+        .lang-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #495057;
+            transition: all 0.3s ease;
+            z-index: 2;
+            position: relative;
+            border: none;
+            background: transparent;
+        }
+        .lang-option.active {
+            color: white;
+        }
+        .lang-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: #007bff;
+            border-radius: 30px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,123,255,0.3);
+            z-index: 1;
+        }
+        .lang-slider.de {
+            transform: translateX(0);
+        }
+        .lang-slider.en {
+            transform: translateX(100%);
+        }
+        
+        /* Flag emojis */
+        .flag {
+            font-size: 18px;
+        }
+
         .subtitle {
             color: #666;
             font-size: 14px;
@@ -201,71 +269,94 @@
             .sentence-card {
                 padding: 10px;
             }
+            .lang-toggle {
+                width: 120px;
+                height: 38px;
+            }
+            .lang-option {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>📋 CV Sentence Bank</h1>
-    <div class="subtitle">Tap a tab, then tap Copy to use sentences</div>
+    <!-- Header with Language Toggle -->
+    <div class="header">
+        <h1>📋 CV Sentence Bank</h1>
+        
+        <!-- Beautiful Language Toggle -->
+        <div class="lang-toggle" id="langToggle">
+            <div class="lang-slider en" id="langSlider"></div>
+            <button class="lang-option active" onclick="setLanguage('en')" id="langEn">
+                <span class="flag">🇬🇧</span> EN
+            </button>
+            <button class="lang-option" onclick="setLanguage('de')" id="langDe">
+                <span class="flag">🇩🇪</span> DE
+            </button>
+        </div>
+    </div>
+    
+    <div class="subtitle" id="subtitle">Different tabs for different job types. Click copy to use sentences instantly!</div>
 
     <!-- Tab Navigation -->
     <div class="tab-container">
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1">
-                <span>💻</span> Dev
+                <span>💻</span> <span class="tab-text" data-en="Dev" data-de="Entw">Dev</span>
             </button>
             <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2">
-                <span>📊</span> Mgmt
+                <span>📊</span> <span class="tab-text" data-en="Mgmt" data-de="Mgmt">Mgmt</span>
             </button>
             <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3">
-                <span>🎨</span> Design
+                <span>🎨</span> <span class="tab-text" data-en="Design" data-de="Design">Design</span>
             </button>
             <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4">
-                <span>📝</span> Generic
+                <span>📝</span> <span class="tab-text" data-en="Generic" data-de="Allg">Generic</span>
             </button>
         </div>
 
         <!-- ========== TAB 1: SOFTWARE DEVELOPMENT ========== -->
         <div id="tab1" class="tab-content active">
             <!-- Professional Summary -->
-            <h2>📌 Professional Summary <span class="badge">CV Header</span></h2>
+            <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects.</div>
+                    <div class="sentence-text" data-en="Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects." data-de="Senior Full-Stack-Entwickler mit 7+ Jahren Erfahrung in der Entwicklung skalierbarer Webanwendungen mit Python, Django und React. Leitete Teams von 5+ Entwicklern und lieferte 15+ erfolgreiche Projekte ab.">Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%.</div>
+                    <div class="sentence-text" data-en="Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%." data-de="Ergebnisorientierter Softwareentwickler mit Spezialisierung auf Cloud-Architektur und Microservices. AWS-zertifiziert mit nachgewiesener Erfolgsbilanz bei der Optimierung der Systemleistung und Senkung der Kosten um 40%.">Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Technical Achievements -->
-            <h2>🏆 Technical Achievements <span class="badge">Under Experience</span></h2>
+            <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Technical Achievements" data-de="Technische Erfolge">Technical Achievements</span> <span class="badge" data-en="Under Experience" data-de="Bei Erfahrung">Under Experience</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%.</div>
+                    <div class="sentence-text" data-en="Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%." data-de="Architektur und Bereitstellung von Microservices mit Docker und Kubernetes, Verbesserung der Skalierbarkeit und Reduzierung der Bereitstellungszeit um 70%.">Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms.</div>
+                    <div class="sentence-text" data-en="Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms." data-de="Optimierte PostgreSQL-Abfragen und implementierte Redis-Caching, Reduzierung der durchschnittlichen API-Antwortzeit von 500ms auf 50ms.">Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Built CI/CD pipelines using GitHub Actions and Jenkins, achieving 99.9% deployment success rate and reducing manual effort.</div>
+                    <div class="sentence-text" data-en="Built CI/CD pipelines using GitHub Actions and Jenkins, achieving 99.9% deployment success rate and reducing manual effort." data-de="Erstellung von CI/CD-Pipelines mit GitHub Actions und Jenkins, Erreichung einer 99,9%igen Bereitstellungserfolgsquote und Reduzierung des manuellen Aufwands.">Built CI/CD pipelines using GitHub Actions and Jenkins, achieving 99.9% deployment success rate and reducing manual effort.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Project Highlights -->
-            <h2>🚀 Key Projects <span class="badge">Portfolio</span></h2>
+            <h2><span class="section-icon">🚀</span> <span class="section-title" data-en="Key Projects" data-de="Schlüsselprojekte">Key Projects</span> <span class="badge" data-en="Portfolio" data-de="Portfolio">Portfolio</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Led development of e-commerce platform handling 100K+ daily users, implementing payment integration and real-time inventory management.</div>
+                    <div class="sentence-text" data-en="Led development of e-commerce platform handling 100K+ daily users, implementing payment integration and real-time inventory management." data-de="Leitung der Entwicklung einer E-Commerce-Plattform mit 100.000+ täglichen Nutzern, Implementierung der Zahlungsintegration und Echtzeit-Bestandsverwaltung.">Led development of e-commerce platform handling 100K+ daily users, implementing payment integration and real-time inventory management.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Created data visualization dashboard processing 1M+ records daily, used by 50+ business analysts for decision making.</div>
+                    <div class="sentence-text" data-en="Created data visualization dashboard processing 1M+ records daily, used by 50+ business analysts for decision making." data-de="Erstellung eines Datenvisualisierungs-Dashboards, das täglich 1M+ Datensätze verarbeitet, das von 50+ Business-Analysten für Entscheidungen genutzt wird.">Created data visualization dashboard processing 1M+ records daily, used by 50+ business analysts for decision making.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
@@ -274,44 +365,44 @@
         <!-- ========== TAB 2: MANAGEMENT ========== -->
         <div id="tab2" class="tab-content">
             <!-- Professional Summary -->
-            <h2>📌 Professional Summary <span class="badge">CV Header</span></h2>
+            <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified.</div>
+                    <div class="sentence-text" data-en="Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified." data-de="Erfahrener technischer Projektmanager mit 8+ Jahren Führung von funktionsübergreifenden Teams zur termingerechten und budgetgerechten Lieferung komplexer Softwareprojekte. PMP- und Scrum-Master-zertifiziert.">Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Results-driven Engineering Manager skilled in team building, agile transformation, and strategic planning. Grew team from 5 to 20 engineers while maintaining 90% retention rate.</div>
+                    <div class="sentence-text" data-en="Results-driven Engineering Manager skilled in team building, agile transformation, and strategic planning. Grew team from 5 to 20 engineers while maintaining 90% retention rate." data-de="Ergebnisorientierter Engineering Manager mit Fähigkeiten in Teambuilding, agiler Transformation und strategischer Planung. Vergrößerte das Team von 5 auf 20 Entwickler bei gleichzeitiger Beibehaltung einer 90%igen Mitarbeiterbindungsrate.">Results-driven Engineering Manager skilled in team building, agile transformation, and strategic planning. Grew team from 5 to 20 engineers while maintaining 90% retention rate.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Leadership Achievements -->
-            <h2>🏆 Leadership Achievements <span class="badge">Management Roles</span></h2>
+            <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Leadership Achievements" data-de="Führungserfolge">Leadership Achievements</span> <span class="badge" data-en="Management Roles" data-de="Management-Rollen">Management Roles</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Managed portfolio of 10+ simultaneous projects worth $5M, delivering all within budget and achieving 95% client satisfaction rate.</div>
+                    <div class="sentence-text" data-en="Managed portfolio of 10+ simultaneous projects worth $5M, delivering all within budget and achieving 95% client satisfaction rate." data-de="Verwaltung eines Portfolios von 10+ gleichzeitigen Projekten im Wert von 5 Mio. $, alle innerhalb des Budgets und mit einer Kundenzufriedenheitsrate von 95%.">Managed portfolio of 10+ simultaneous projects worth $5M, delivering all within budget and achieving 95% client satisfaction rate.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Implemented agile methodologies across 4 teams, increasing velocity by 60% and reducing time-to-market by 40%.</div>
+                    <div class="sentence-text" data-en="Implemented agile methodologies across 4 teams, increasing velocity by 60% and reducing time-to-market by 40%." data-de="Implementierung agiler Methoden in 4 Teams, Steigerung der Geschwindigkeit um 60% und Reduzierung der Time-to-Market um 40%.">Implemented agile methodologies across 4 teams, increasing velocity by 60% and reducing time-to-market by 40%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Mentored 12 junior developers, with 8 promoted to senior roles within 2 years. Established career development framework used company-wide.</div>
+                    <div class="sentence-text" data-en="Mentored 12 junior developers, with 8 promoted to senior roles within 2 years. Established career development framework used company-wide." data-de="Betreuung von 12 Junior-Entwicklern, von denen 8 innerhalb von 2 Jahren in Senior-Rollen befördert wurden. Etablierung eines unternehmensweit genutzten Karriereentwicklungsrahmens.">Mentored 12 junior developers, with 8 promoted to senior roles within 2 years. Established career development framework used company-wide.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Process Improvements -->
-            <h2>⚡ Process Excellence <span class="badge">Achievements</span></h2>
+            <h2><span class="section-icon">⚡</span> <span class="section-title" data-en="Process Excellence" data-de="Prozessexzellenz">Process Excellence</span> <span class="badge" data-en="Achievements" data-de="Erfolge">Achievements</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Streamlined project estimation process, improving accuracy by 50% and reducing scope creep by 75%.</div>
+                    <div class="sentence-text" data-en="Streamlined project estimation process, improving accuracy by 50% and reducing scope creep by 75%." data-de="Optimierung des Projektsschätzprozesses, Verbesserung der Genauigkeit um 50% und Reduzierung von Scope Creep um 75%.">Streamlined project estimation process, improving accuracy by 50% and reducing scope creep by 75%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Introduced OKR framework across engineering department, aligning 50+ employees with company goals and exceeding targets by 30%.</div>
+                    <div class="sentence-text" data-en="Introduced OKR framework across engineering department, aligning 50+ employees with company goals and exceeding targets by 30%." data-de="Einführung des OKR-Rahmens in der gesamten Entwicklungsabteilung, Ausrichtung von 50+ Mitarbeitern auf Unternehmensziele und Übertreffen der Ziele um 30%.">Introduced OKR framework across engineering department, aligning 50+ employees with company goals and exceeding targets by 30%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
@@ -320,31 +411,31 @@
         <!-- ========== TAB 3: DESIGN ========== -->
         <div id="tab3" class="tab-content">
             <!-- Professional Summary -->
-            <h2>📌 Professional Summary <span class="badge">CV Header</span></h2>
+            <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies.</div>
+                    <div class="sentence-text" data-en="Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies." data-de="Kreativer UI/UX-Designer mit 6 Jahren Erfahrung in der Gestaltung intuitiver digitaler Erlebnisse. Portfolio umfasst 20+ erfolgreiche Produkteinführungen für Fortune-500-Unternehmen.">Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">User-centered Product Designer skilled in end-to-end design process from research to high-fidelity prototypes. Advocate for accessibility and inclusive design.</div>
+                    <div class="sentence-text" data-en="User-centered Product Designer skilled in end-to-end design process from research to high-fidelity prototypes. Advocate for accessibility and inclusive design." data-de="Nutzerzentrierter Produktdesigner mit Erfahrung im gesamten Designprozess von der Recherche bis zu hochauflösenden Prototypen. Verfechter von Barrierefreiheit und inklusivem Design.">User-centered Product Designer skilled in end-to-end design process from research to high-fidelity prototypes. Advocate for accessibility and inclusive design.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Design Achievements -->
-            <h2>🏆 Design Impact <span class="badge">Results</span></h2>
+            <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Design Impact" data-de="Design-Wirkung">Design Impact</span> <span class="badge" data-en="Results" data-de="Ergebnisse">Results</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Redesigned mobile app interface resulting in 45% increase in user engagement and 4.8⭐ app store rating.</div>
+                    <div class="sentence-text" data-en="Redesigned mobile app interface resulting in 45% increase in user engagement and 4.8⭐ app store rating." data-de="Neugestaltung der mobilen App-Oberfläche, was zu einer Steigerung der Nutzerinteraktion um 45% und einer App-Store-Bewertung von 4,8⭐ führte.">Redesigned mobile app interface resulting in 45% increase in user engagement and 4.8⭐ app store rating.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Conducted user research with 100+ participants, leading to design changes that reduced user errors by 60%.</div>
+                    <div class="sentence-text" data-en="Conducted user research with 100+ participants, leading to design changes that reduced user errors by 60%." data-de="Durchführung von Nutzerforschung mit 100+ Teilnehmern, was zu Designänderungen führte, die Nutzerfehler um 60% reduzierten.">Conducted user research with 100+ participants, leading to design changes that reduced user errors by 60%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Created design system adopted by 15+ product teams, ensuring consistency and reducing development time by 30%.</div>
+                    <div class="sentence-text" data-en="Created design system adopted by 15+ product teams, ensuring consistency and reducing development time by 30%." data-de="Erstellung eines Designsystems, das von 15+ Produktteams übernommen wurde, Sicherstellung der Konsistenz und Reduzierung der Entwicklungszeit um 30%.">Created design system adopted by 15+ product teams, ensuring consistency and reducing development time by 30%.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
@@ -353,61 +444,61 @@
         <!-- ========== TAB 4: GENERIC / ALL PURPOSE ========== -->
         <div id="tab4" class="tab-content">
             <!-- Education -->
-            <h2>🎓 Education <span class="badge">Always relevant</span></h2>
+            <h2><span class="section-icon">🎓</span> <span class="section-title" data-en="Education" data-de="Ausbildung">Education</span> <span class="badge" data-en="Always relevant" data-de="Immer relevant">Always relevant</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA.</div>
+                    <div class="sentence-text" data-en="Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA." data-de="Bachelor of Science in Informatik, Universitätsname, 2020. Abschluss Magna Cum Laude mit 3,8 GPA.">Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Master of Business Administration, University Name, 2023. Focus on Technology Management and Innovation.</div>
+                    <div class="sentence-text" data-en="Master of Business Administration, University Name, 2023. Focus on Technology Management and Innovation." data-de="Master of Business Administration, Universitätsname, 2023. Schwerpunkt auf Technologiemanagement und Innovation.">Master of Business Administration, University Name, 2023. Focus on Technology Management and Innovation.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Certifications -->
-            <h2>📜 Certifications <span class="badge">Add to skills</span></h2>
+            <h2><span class="section-icon">📜</span> <span class="section-title" data-en="Certifications" data-de="Zertifizierungen">Certifications</span> <span class="badge" data-en="Add to skills" data-de="Zu Fähigkeiten">Add to skills</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">AWS Certified Solutions Architect - Professional (2023)</div>
+                    <div class="sentence-text" data-en="AWS Certified Solutions Architect - Professional (2023)" data-de="AWS-zertifizierter Lösungsarchitekt - Professional (2023)">AWS Certified Solutions Architect - Professional (2023)</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Certified ScrumMaster (CSM) with 3 years experience leading agile teams</div>
+                    <div class="sentence-text" data-en="Certified ScrumMaster (CSM) with 3 years experience leading agile teams" data-de="Zertifizierter ScrumMaster (CSM) mit 3 Jahren Erfahrung in der Leitung agiler Teams">Certified ScrumMaster (CSM) with 3 years experience leading agile teams</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Google UX Design Professional Certificate (2022)</div>
+                    <div class="sentence-text" data-en="Google UX Design Professional Certificate (2022)" data-de="Google UX Design Professional Zertifikat (2022)">Google UX Design Professional Certificate (2022)</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Soft Skills -->
-            <h2>🤝 Core Competencies <span class="badge">Mix and match</span></h2>
+            <h2><span class="section-icon">🤝</span> <span class="section-title" data-en="Core Competencies" data-de="Kernkompetenzen">Core Competencies</span> <span class="badge" data-en="Mix and match" data-de="Kombinierbar">Mix and match</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Excellent verbal and written communication skills, with experience presenting to C-level executives.</div>
+                    <div class="sentence-text" data-en="Excellent verbal and written communication skills, with experience presenting to C-level executives." data-de="Hervorragende mündliche und schriftliche Kommunikationsfähigkeiten, mit Erfahrung in Präsentationen vor C-Level-Führungskräften.">Excellent verbal and written communication skills, with experience presenting to C-level executives.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Strong analytical and problem-solving abilities, with track record of identifying and resolving complex issues.</div>
+                    <div class="sentence-text" data-en="Strong analytical and problem-solving abilities, with track record of identifying and resolving complex issues." data-de="Starke analytische Fähigkeiten und Problemlösungskompetenz, mit nachgewiesener Erfolgsbilanz bei der Identifizierung und Lösung komplexer Probleme.">Strong analytical and problem-solving abilities, with track record of identifying and resolving complex issues.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Collaborative team player who thrives in fast-paced environments and adapts quickly to changing priorities.</div>
+                    <div class="sentence-text" data-en="Collaborative team player who thrives in fast-paced environments and adapts quickly to changing priorities." data-de="Kollaborativer Teamplayer, der in schnelllebigen Umgebungen aufblüht und sich schnell an wechselnde Prioritäten anpasst.">Collaborative team player who thrives in fast-paced environments and adapts quickly to changing priorities.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
 
             <!-- Language Skills -->
-            <h2>🌍 Languages <span class="badge">If applicable</span></h2>
+            <h2><span class="section-icon">🌍</span> <span class="section-title" data-en="Languages" data-de="Sprachen">Languages</span> <span class="badge" data-en="If applicable" data-de="Falls zutreffend">If applicable</span></h2>
             <div class="sentence-grid">
                 <div class="sentence-card">
-                    <div class="sentence-text">Fluent in English and Spanish, with professional working proficiency in French.</div>
+                    <div class="sentence-text" data-en="Fluent in English and Spanish, with professional working proficiency in French." data-de="Fließend in Englisch und Spanisch, mit beruflichen Arbeitskenntnissen in Französisch.">Fluent in English and Spanish, with professional working proficiency in French.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
                 <div class="sentence-card">
-                    <div class="sentence-text">Native German speaker with business fluency in English and conversational Mandarin.</div>
+                    <div class="sentence-text" data-en="Native German speaker with business fluency in English and conversational Mandarin." data-de="Deutscher Muttersprachler mit verhandlungssicherem Englisch und Konversationskenntnissen in Mandarin.">Native German speaker with business fluency in English and conversational Mandarin.</div>
                     <button class="copy-btn" onclick="copyText(this)">Copy</button>
                 </div>
             </div>
@@ -417,32 +508,34 @@
     <!-- Quick Actions -->
     <div class="quick-actions">
         <button class="action-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span>⬆️</span> Back to top
+            <span>⬆️</span> <span data-en="Back to top" data-de="Nach oben">Back to top</span>
         </button>
     </div>
 
-    <div class="footer-note">
+    <div class="footer-note" data-en="Tap any Copy button • Sentences go to clipboard" data-de="Tippe auf Kopieren • Sätze gehen in die Zwischenablage">
         Tap any Copy button • Sentences go to clipboard
     </div>
 
     <script>
+        let currentLanguage = 'en';
+
         function copyText(button) {
             const sentenceDiv = button.parentElement.querySelector('.sentence-text');
             const textToCopy = sentenceDiv.innerText;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                button.textContent = 'Copied!';
+                button.textContent = currentLanguage === 'en' ? 'Copied!' : 'Kopiert!';
                 button.classList.add('copied');
                 
                 setTimeout(() => {
-                    button.textContent = 'Copy';
+                    button.textContent = currentLanguage === 'en' ? 'Copy' : 'Kopieren';
                     button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
                 console.error('Copy failed:', err);
                 button.textContent = 'Error';
                 setTimeout(() => {
-                    button.textContent = 'Copy';
+                    button.textContent = currentLanguage === 'en' ? 'Copy' : 'Kopieren';
                 }, 2000);
             });
         }
@@ -465,6 +558,66 @@
             // Scroll to top when switching tabs on mobile
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update slider position
+            const slider = document.getElementById('langSlider');
+            const langEn = document.getElementById('langEn');
+            const langDe = document.getElementById('langDe');
+            
+            if (lang === 'en') {
+                slider.className = 'lang-slider en';
+                langEn.classList.add('active');
+                langDe.classList.remove('active');
+            } else {
+                slider.className = 'lang-slider de';
+                langDe.classList.add('active');
+                langEn.classList.remove('active');
+            }
+            
+            // Update all text elements with data-en and data-de attributes
+            document.querySelectorAll('[data-en][data-de]').forEach(element => {
+                if (element.tagName === 'BUTTON' && element.classList.contains('copy-btn')) {
+                    // Skip copy buttons, they're handled separately
+                    return;
+                }
+                element.innerText = element.getAttribute(`data-${lang}`);
+            });
+            
+            // Update copy button texts
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                if (!btn.classList.contains('copied')) {
+                    btn.innerText = lang === 'en' ? 'Copy' : 'Kopieren';
+                }
+            });
+            
+            // Update subtitle
+            const subtitle = document.getElementById('subtitle');
+            if (lang === 'en') {
+                subtitle.innerText = 'Different tabs for different job types. Click copy to use sentences instantly!';
+            } else {
+                subtitle.innerText = 'Verschiedene Tabs für verschiedene Jobtypen. Klicke auf Kopieren, um Sätze sofort zu verwenden!';
+            }
+            
+            // Update footer note
+            const footer = document.querySelector('.footer-note');
+            if (lang === 'en') {
+                footer.innerText = 'Tap any Copy button • Sentences go to clipboard';
+            } else {
+                footer.innerText = 'Tippe auf Kopieren • Sätze gehen in die Zwischenablage';
+            }
+            
+            // Update back to top button
+            const backToTop = document.querySelector('.action-btn span:last-child');
+            if (backToTop) {
+                backToTop.innerText = lang === 'en' ? 'Back to top' : 'Nach oben';
+            }
+        }
+
+        // Initialize with English
+        setLanguage('en');
     </script>
 </body>
 </html>
