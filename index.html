@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>📋 CV Builder · LaTeX Style</title>
+    <title>📋 CV Builder · Structured Data</title>
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- html2canvas for image support -->
@@ -15,38 +15,44 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Roboto Slab', 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 10px;
             min-height: 100vh;
         }
         
-        /* Import fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
         
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin: 10px 0 5px;
-            padding-bottom: 8px;
-            border-bottom: 3px solid #4A4A4A;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             flex-wrap: wrap;
             gap: 10px;
         }
         h1 {
-            font-size: 24px;
-            color: #2E2E2E;
+            font-size: 28px;
+            color: #667eea;
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-family: 'Roboto Slab', serif;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         .lang-toggle {
             display: flex;
             align-items: center;
-            background: #e9ecef;
+            background: #f0f0f0;
             border-radius: 40px;
             padding: 4px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
@@ -71,7 +77,6 @@
             position: relative;
             border: none;
             background: transparent;
-            font-family: 'Lato', sans-serif;
         }
         .lang-option.active {
             color: white;
@@ -82,10 +87,9 @@
             left: 4px;
             width: calc(50% - 4px);
             height: calc(100% - 8px);
-            background: #4A4A4A;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 30px;
             transition: transform 0.3s ease;
-            box-shadow: 0 2px 5px rgba(74,74,74,0.3);
             z-index: 1;
         }
         .lang-slider.de {
@@ -96,11 +100,57 @@
         }
         .flag { font-size: 18px; }
 
-        .subtitle {
-            color: #666666;
+        .job-role-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-left: 5px solid #667eea;
+        }
+        .job-role-label {
+            display: block;
             font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .job-role-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .job-role-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .job-role-preview {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+        .job-role-preview span {
+            color: #667eea;
+            font-weight: 600;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 5px;
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 16px;
             margin-bottom: 15px;
-            font-family: 'Lato', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-weight: 300;
         }
 
         .tab-container {
@@ -109,61 +159,64 @@
         .tabs {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-            background: #f5f5f5;
+            gap: 10px;
+            background: transparent;
         }
         .tab-btn {
-            padding: 10px 4px;
-            background: #e9ecef;
+            padding: 15px 4px;
+            background: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            color: #2E2E2E;
-            transition: all 0.2s;
+            color: #495057;
+            transition: all 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            word-break: break-word;
-            line-height: 1.2;
-            min-height: 60px;
-            font-family: 'Lato', sans-serif;
+            gap: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .tab-btn span { font-size: 18px; }
-        .tab-btn.active { background: #4A4A4A; color: white; }
+        .tab-btn span { font-size: 20px; }
+        .tab-btn.active { 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
 
         .tab-content {
             display: none;
-            padding: 15px 10px;
+            padding: 20px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        .tab-content.active { display: block; }
+        .tab-content.active {
+            display: block;
+        }
 
         h2 {
-            color: #1E1E1E;
-            font-size: 18px;
-            margin: 20px 0 12px;
+            color: #667eea;
+            font-size: 20px;
+            margin: 25px 0 15px;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
-            font-family: 'Roboto Slab', serif;
-            font-weight: 700;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
         }
         h2:first-child { margin-top: 0; }
         .badge {
-            background: #e7f3ff;
-            color: #4A4A4A;
-            padding: 4px 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
             white-space: nowrap;
-            font-family: 'Lato', sans-serif;
         }
 
         .sentence-grid {
@@ -174,13 +227,18 @@
         }
         .sentence-card {
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            border-left: 4px solid #4A4A4A;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            gap: 12px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .sentence-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
         }
         .sentence-content {
             display: flex;
@@ -192,90 +250,89 @@
             flex: 1;
             font-size: 14px;
             line-height: 1.5;
-            color: #2E2E2E;
+            color: #333;
             padding: 8px;
             background: white;
-            border: 1px solid #CCCCCC;
-            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             resize: vertical;
             min-height: 60px;
-            font-family: 'Lato', sans-serif;
+            font-family: inherit;
         }
         .sentence-text:focus {
-            outline: 2px solid #4A4A4A;
-            border-color: transparent;
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         .button-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
         .add-btn {
-            background: #4A4A4A;
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
+            border-radius: 25px;
+            padding: 8px 20px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            min-width: 70px;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(74,74,74,0.3);
-            font-family: 'Lato', sans-serif;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
         }
         .add-btn:active {
             transform: scale(0.95);
-            background: #1E1E1E;
         }
         .add-btn.added {
-            background: #CCCCCC;
-            color: #1E1E1E;
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #333;
         }
         .reset-btn {
-            background: #666666;
+            background: linear-gradient(135deg, #6c757d, #495057);
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
+            border-radius: 25px;
+            padding: 8px 20px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            min-width: 70px;
-            transition: all 0.2s;
-            font-family: 'Lato', sans-serif;
+            transition: all 0.3s;
         }
         .reset-btn:active {
             transform: scale(0.95);
-            background: #2E2E2E;
         }
 
         .quick-actions {
             display: flex;
             gap: 10px;
-            margin: 15px 0;
+            margin: 20px 0;
             flex-wrap: wrap;
             align-items: center;
         }
         .action-btn {
             background: white;
-            border: 1px solid #CCCCCC;
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 13px;
-            color: #2E2E2E;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #495057;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-family: 'Lato', sans-serif;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            font-weight: 500;
         }
-        .action-btn:active { background: #f0f0f0; }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
         .action-btn.primary {
-            background: #4A4A4A;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border: none;
         }
         .cart-badge {
             background: #dc3545;
@@ -289,76 +346,79 @@
         .cart-view {
             display: none;
             background: white;
-            border-radius: 12px;
-            padding: 20px 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-top: 15px;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-top: 20px;
         }
         .cart-view.active { display: block; }
         .cart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
         .cart-item {
             background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            border-left: 4px solid #4A4A4A;
+            gap: 12px;
+            border-left: 4px solid #667eea;
         }
         .cart-item-content {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: flex-start;
             width: 100%;
         }
         .cart-item-text {
             flex: 1;
             font-size: 14px;
-            padding: 8px;
+            padding: 10px;
             background: white;
-            border: 1px solid #CCCCCC;
-            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             resize: vertical;
             min-height: 60px;
-            font-family: 'Lato', sans-serif;
+            font-family: inherit;
         }
         .cart-item-text:focus {
-            outline: 2px solid #4A4A4A;
-            border-color: transparent;
+            outline: none;
+            border-color: #667eea;
         }
         .remove-btn {
-            background: #666666;
+            background: linear-gradient(135deg, #dc3545, #c82333);
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
+            border-radius: 25px;
+            padding: 8px 20px;
             font-size: 12px;
             cursor: pointer;
             white-space: nowrap;
-            font-family: 'Lato', sans-serif;
         }
         .cart-footer {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 25px;
             flex-wrap: wrap;
         }
 
-        /* CV Preview Styles - matches LaTeX exactly */
+        /* Black & White CV Preview */
         .cv-preview {
             background: white;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            font-family: 'Lato', sans-serif;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            font-family: 'Lato', 'Arial', sans-serif;
             display: none;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            filter: grayscale(100%);
         }
         
         .cv-preview.active {
@@ -369,64 +429,67 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #CCCCCC;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #000;
             padding-bottom: 20px;
         }
         
         .cv-name-title h1 {
-            font-family: 'Roboto Slab', serif;
-            font-size: 32px;
-            color: #000000;
+            font-family: 'Times New Roman', serif;
+            font-size: 36px;
+            color: #000;
             margin: 0;
             padding: 0;
+            font-weight: 700;
         }
         
         .cv-name-title h2 {
-            font-family: 'Lato', sans-serif;
-            font-size: 16px;
-            color: #4A4A4A;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            color: #333;
             margin: 5px 0 0 0;
             font-weight: 400;
+            font-style: italic;
         }
         
         .cv-photo {
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: #CCCCCC;
+            background: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666666;
+            color: #666;
             font-size: 12px;
-            border: 3px solid #4A4A4A;
+            border: 2px solid #000;
         }
         
         .cv-contact {
-            background: #f8f9fa;
+            background: #f9f9f9;
             padding: 15px;
-            margin-bottom: 20px;
-            border-left: 4px solid #4A4A4A;
+            margin-bottom: 25px;
+            border-left: 4px solid #000;
             font-size: 14px;
-            color: #2E2E2E;
+            color: #000;
         }
         
         .cv-section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .cv-section-title {
-            font-family: 'Roboto Slab', serif;
-            font-size: 20px;
-            color: #1E1E1E;
-            border-bottom: 2px solid #CCCCCC;
+            font-family: 'Times New Roman', serif;
+            font-size: 22px;
+            color: #000;
+            border-bottom: 1px solid #000;
             padding-bottom: 5px;
             margin-bottom: 15px;
+            font-weight: 700;
         }
         
         .cv-item {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .cv-item-header {
@@ -438,31 +501,31 @@
         
         .cv-item-title {
             font-weight: 700;
-            color: #2E2E2E;
+            color: #000;
             font-size: 16px;
         }
         
         .cv-item-subtitle {
-            color: #4A4A4A;
+            color: #333;
             font-style: italic;
             font-size: 14px;
         }
         
-        .cv-item-date {
-            color: #666666;
-            font-size: 14px;
-        }
-        
         .cv-item-location {
-            color: #666666;
-            font-size: 14px;
+            color: #666;
+            font-size: 13px;
             margin-left: 10px;
         }
         
+        .cv-item-date {
+            color: #333;
+            font-size: 14px;
+        }
+        
         .cv-item-description {
-            margin-top: 5px;
+            margin-top: 8px;
             padding-left: 20px;
-            color: #2E2E2E;
+            color: #000;
             font-size: 14px;
         }
         
@@ -471,13 +534,13 @@
         }
         
         .cv-item-description li {
-            margin-bottom: 3px;
+            margin-bottom: 5px;
             position: relative;
         }
         
         .cv-item-description li:before {
             content: "•";
-            color: #4A4A4A;
+            color: #000;
             font-weight: bold;
             position: absolute;
             left: -15px;
@@ -492,232 +555,370 @@
         
         .cv-tag {
             background: #f0f0f0;
-            color: #2E2E2E;
+            color: #000;
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 15px;
             font-size: 12px;
-            border: 1px solid #CCCCCC;
+            border: 1px solid #ccc;
         }
 
         .footer-note {
             text-align: center;
-            margin-top: 20px;
-            color: #666666;
-            font-size: 12px;
-            font-family: 'Lato', sans-serif;
+            margin-top: 30px;
+            color: white;
+            font-size: 13px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         @media (max-width: 380px) {
-            .tab-btn { font-size: 11px; padding: 8px 2px; }
-            .tab-btn span { font-size: 16px; }
-            h1 { font-size: 20px; }
-            .lang-toggle { width: 120px; height: 38px; }
-            .lang-option { padding: 6px 8px; font-size: 12px; }
+            .tab-btn { font-size: 12px; padding: 10px 2px; }
+            .tab-btn span { font-size: 18px; }
+            h1 { font-size: 24px; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📋 CV Builder · LaTeX Style</h1>
-        <div class="lang-toggle" id="langToggle">
-            <div class="lang-slider en" id="langSlider"></div>
-            <button class="lang-option active" onclick="setLanguage('en')" id="langEn"><span class="flag">🇬🇧</span> EN</button>
-            <button class="lang-option" onclick="setLanguage('de')" id="langDe"><span class="flag">🇩🇪</span> DE</button>
-        </div>
-    </div>
-    
-    <div class="subtitle" id="subtitle">Edit sentences • Add to cart • Preview CV → download PDF</div>
-
-    <div class="tab-container" id="tabContainer">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1"><span>💻</span> <span class="tab-text" data-en="Dev" data-de="Entw">Dev</span></button>
-            <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2"><span>📊</span> <span class="tab-text" data-en="Mgmt" data-de="Mgmt">Mgmt</span></button>
-            <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3"><span>🎨</span> <span class="tab-text" data-en="Design" data-de="Design">Design</span></button>
-            <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4"><span>📝</span> <span class="tab-text" data-en="Generic" data-de="Allg">Generic</span></button>
-        </div>
-
-        <!-- Tab1 Work Experience -->
-        <div id="tab1" class="tab-content active">
-            <h2><span class="section-icon">💼</span> <span class="section-title" data-en="Work Experience" data-de="Berufserfahrung">Work Experience</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card" data-section="Work Experience">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Automated scripting using Python Beta API(PyAEDT)" data-de="Automatisierte Skripterstellung mit Python Beta API (PyAEDT)">Automated scripting using Python Beta API(PyAEDT)</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-section="Work Experience">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Python Tkinter GUI development for Motor design." data-de="Python Tkinter GUI-Entwicklung für Motordesign.">Python Tkinter GUI development for Motor design.</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-section="Work Experience">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Supporting electromagnetic and thermal analysis of electrical machines using Ansys CAD Electronic Desktop and MATLAB." data-de="Unterstützung bei elektromagnetischer und thermischer Analyse elektrischer Maschinen mit Ansys CAD Electronic Desktop und MATLAB.">Supporting electromagnetic and thermal analysis of electrical machines using Ansys CAD Electronic Desktop and MATLAB.</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab2 Education -->
-        <div id="tab2" class="tab-content">
-            <h2><span class="section-icon">🎓</span> <span class="section-title" data-en="Education" data-de="Ausbildung">Education</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card" data-section="Education">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Design and Implementation of Universal Biquad Filter for analog and mixed signal systems" data-de="Entwurf und Implementierung eines universellen Biquad-Filters für analoge und Mixed-Signal-Systeme">Design and Implementation of Universal Biquad Filter for analog and mixed signal systems</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-section="Education">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Modelling and Design of PCB in Altium Designer, KiCAD" data-de="Modellierung und Design von PCBs in Altium Designer, KiCAD">Modelling and Design of PCB in Altium Designer, KiCAD</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab3 Projects -->
-        <div id="tab3" class="tab-content">
-            <h2><span class="section-icon">🚀</span> <span class="section-title" data-en="Projects" data-de="Projekte">Projects</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card" data-section="Projects">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Hosting Personal website on Github domain: ryanromeodev.github.io/personal-site/" data-de="Persönliche Website auf Github-Domain hosten: ryanromeodev.github.io/personal-site/">Hosting Personal website on Github domain: ryanromeodev.github.io/personal-site/</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-section="Projects">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Developed Android Dart/Flutter Application for plant inventory management" data-de="Entwicklung einer Android Dart/Flutter-Anwendung für Pflanzeninventarverwaltung">Developed Android Dart/Flutter Application for plant inventory management</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab4 Skills & Languages -->
-        <div id="tab4" class="tab-content">
-            <h2><span class="section-icon">⚡</span> <span class="section-title" data-en="Skills & Languages" data-de="Fähigkeiten & Sprachen">Skills & Languages</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card" data-section="Skills">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="Python, C++, Dart, Java, React" data-de="Python, C++, Dart, Java, React">Python, C++, Dart, Java, React</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-section="Languages">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="English - Fluent" data-de="Englisch - Fließend">English - Fluent</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-                <div class="sentence-card" data-section="Languages">
-                    <div class="sentence-content">
-                        <textarea class="sentence-text" data-en="German - Professional (B2/C1)" data-de="Deutsch - Verhandlungssicher (B2/C1)">German - Professional (B2/C1)</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
-                        <button class="add-btn" onclick="addToCart(this)">Add</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="quick-actions">
-        <button class="action-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span>⬆️</span> <span data-en="Top" data-de="Nach oben">Top</span>
-        </button>
-        <button class="action-btn" onclick="clearCart()">
-            <span>🗑️</span> <span data-en="Clear cart" data-de="Warenkorb leeren">Clear cart</span>
-        </button>
-        <div style="flex:1; text-align:right;">
-            <span class="cart-badge" id="cartCount">0</span>
-        </div>
-        <button class="action-btn primary" onclick="showCartView()" id="nextBtn">
-            <span>➡️</span> <span data-en="Next" data-de="Weiter">Next</span>
-        </button>
-    </div>
-
-    <div id="cartView" class="cart-view">
-        <div class="cart-header">
-            <h2 data-en="Your selected sentences (editable)" data-de="Ihre ausgewählten Sätze (bearbeitbar)">Your selected sentences (editable)</h2>
-            <button class="action-btn" onclick="hideCartView()"><span>⬅️</span> <span data-en="Back" data-de="Zurück">Back</span></button>
-        </div>
-        <div id="cartItemsContainer"></div>
-        <div class="cart-footer">
-            <button class="action-btn" onclick="clearCart()"><span>🗑️</span> <span data-en="Clear cart" data-de="Leeren">Clear cart</span></button>
-            <button class="action-btn primary" onclick="generateAndDownloadPDF()"><span>📄</span> <span data-en="Download CV (PDF)" data-de="CV als PDF">Download CV (PDF)</span></button>
-            <button class="action-btn" onclick="previewCV()"><span>👁️</span> <span data-en="Preview CV" data-de="CV Vorschau">Preview CV</span></button>
-        </div>
-        <div class="footer-note" style="margin-top:15px;" data-en="Edit any sentence • CV includes fixed personal details with photo" data-de="Bearbeite Sätze • CV enthält feste persönliche Daten mit Foto">Edit any sentence • CV includes fixed personal details with photo</div>
-    </div>
-
-    <!-- CV Preview Section -->
-    <div id="cvPreview" class="cv-preview">
-        <div class="cv-header">
-            <div class="cv-name-title">
-                <h1>Ryan Romeo</h1>
-                <h2>Electronics and Computer Science Engineer</h2>
-            </div>
-            <div class="cv-photo" id="photoPlaceholder">
-                <span>📷 Photo</span>
+    <div class="main-container">
+        <div class="header">
+            <h1>📋 Professional CV Builder</h1>
+            <div class="lang-toggle" id="langToggle">
+                <div class="lang-slider en" id="langSlider"></div>
+                <button class="lang-option active" onclick="setLanguage('en')" id="langEn"><span class="flag">🇬🇧</span> EN</button>
+                <button class="lang-option" onclick="setLanguage('de')" id="langDe"><span class="flag">🇩🇪</span> DE</button>
             </div>
         </div>
         
-        <div class="cv-contact">
-            <span style="margin-right: 20px;">📧 ryanromeo10@gmail.com</span>
-            <span style="margin-right: 20px;">📞 (+49) 15 212 669675</span>
-            <span>📍 Luisental 29B, Bremen, 28359 Germany</span>
+        <!-- Job Role Input - Editable -->
+        <div class="job-role-container">
+            <label class="job-role-label" data-en="Job Role / Title" data-de="Berufsbezeichnung">Job Role / Title</label>
+            <input type="text" id="jobRoleInput" class="job-role-input" placeholder="e.g., Electronics Engineer, Software Developer..." value="Electronics Engineer">
+            <div class="job-role-preview" data-en="CV will be saved as: " data-de="CV wird gespeichert als: ">
+                <span id="filenamePreview">ryan_Electronics_Engineer_CV.pdf</span>
+            </div>
         </div>
         
-        <div id="cvContent"></div>
-    </div>
+        <div class="subtitle" id="subtitle">Edit sentences • Add to cart • Build your CV → download black & white PDF</div>
 
-    <div class="footer-note" id="mainFooter" data-en="Edit • Add to cart • Preview → download CV with photo" data-de="Bearbeiten • Hinzufügen • Vorschau → CV mit Foto">Edit • Add to cart • Preview → download CV with photo</div>
+        <div class="tab-container" id="tabContainer">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1"><span>💼</span> <span class="tab-text" data-en="Work" data-de="Beruf">Work</span></button>
+                <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2"><span>🎓</span> <span class="tab-text" data-en="Education" data-de="Bildung">Education</span></button>
+                <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3"><span>🚀</span> <span class="tab-text" data-en="Projects" data-de="Projekte">Projects</span></button>
+                <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4"><span>⚡</span> <span class="tab-text" data-en="Skills" data-de="Fähigkeiten">Skills</span></button>
+            </div>
+
+            <!-- Tab contents will be dynamically populated by JavaScript -->
+            <div id="tab1" class="tab-content active"></div>
+            <div id="tab2" class="tab-content"></div>
+            <div id="tab3" class="tab-content"></div>
+            <div id="tab4" class="tab-content"></div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="action-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <span>⬆️</span> <span data-en="Top" data-de="Nach oben">Top</span>
+            </button>
+            <button class="action-btn" onclick="clearCart()">
+                <span>🗑️</span> <span data-en="Clear cart" data-de="Warenkorb leeren">Clear cart</span>
+            </button>
+            <div style="flex:1; text-align:right;">
+                <span class="cart-badge" id="cartCount">0</span>
+            </div>
+            <button class="action-btn primary" onclick="showCartView()" id="nextBtn">
+                <span>➡️</span> <span data-en="Next" data-de="Weiter">Next</span>
+            </button>
+        </div>
+
+        <div id="cartView" class="cart-view">
+            <div class="cart-header">
+                <h2 data-en="Your selected sentences (editable)" data-de="Ihre ausgewählten Sätze (bearbeitbar)">Your selected sentences (editable)</h2>
+                <button class="action-btn" onclick="hideCartView()"><span>⬅️</span> <span data-en="Back" data-de="Zurück">Back</span></button>
+            </div>
+            <div id="cartItemsContainer"></div>
+            <div class="cart-footer">
+                <button class="action-btn" onclick="clearCart()"><span>🗑️</span> <span data-en="Clear cart" data-de="Leeren">Clear cart</span></button>
+                <button class="action-btn primary" onclick="previewAndDownloadCV()"><span>📄</span> <span data-en="Download CV (PDF)" data-de="CV als PDF">Download CV (PDF)</span></button>
+                <button class="action-btn" onclick="previewCV()"><span>👁️</span> <span data-en="Preview CV" data-de="CV Vorschau">Preview CV</span></button>
+            </div>
+            <div class="footer-note" style="color:#666; margin-top:15px;" data-en="Edit any sentence • CV will be black & white with proper titles" data-de="Bearbeite Sätze • CV wird schwarz-weiß mit richtigen Titeln">Edit any sentence • CV will be black & white with proper titles</div>
+        </div>
+
+        <!-- Black & White CV Preview -->
+        <div id="cvPreview" class="cv-preview">
+            <div class="cv-header">
+                <div class="cv-name-title">
+                    <h1>Ryan Romeo</h1>
+                    <h2 id="cvJobRoleDisplay">Electronics Engineer</h2>
+                </div>
+                <div class="cv-photo" id="photoPlaceholder">
+                    <span>📷 Photo</span>
+                </div>
+            </div>
+            
+            <div class="cv-contact">
+                <span style="margin-right: 20px;">📧 ryanromeo10@gmail.com</span>
+                <span style="margin-right: 20px;">📞 (+49) 15 212 669675</span>
+                <span>📍 Luisental 29B, Bremen, 28359 Germany</span>
+            </div>
+            
+            <div id="cvContent"></div>
+        </div>
+
+        <div class="footer-note" id="mainFooter" data-en="Colorful UI • Black & White CV • Structured data" data-de="Bunte Oberfläche • Schwarz-Weiß CV • Strukturierte Daten">Colorful UI • Black & White CV • Structured data</div>
+    </div>
 
     <script>
-        // Fixed personal details (exactly as in LaTeX)
+        // ==================== STRUCTURED DATA ====================
+        // All CV content is defined here – easy to edit and bilingual.
+        const cvData = {
+            workExperience: [
+                {
+                    id: 'fraunhofer',
+                    title: { en: 'Studentische Hilfskraft', de: 'Studentische Hilfskraft' },
+                    company: { en: 'Fraunhofer-Institut für Fertigungstechnik und Angewandte Materialforschung IFAM', de: 'Fraunhofer-Institut für Fertigungstechnik und Angewandte Materialforschung IFAM' },
+                    date: { en: '06/2025 - present', de: '06/2025 - heute' },
+                    location: { en: 'Bremen, Germany', de: 'Bremen, Deutschland' },
+                    bullets: [
+                        { en: 'Automated scripting using Python Beta API (PyAEDT)', de: 'Automatisierte Skripterstellung mit Python Beta API (PyAEDT)' },
+                        { en: 'Python Tkinter GUI development for Motor design.', de: 'Python Tkinter GUI-Entwicklung für Motordesign.' },
+                        { en: 'Supporting electromagnetic and thermal analysis of electrical machines using Ansys CAD Electronic Desktop and MATLAB.', de: 'Unterstützung bei elektromagnetischer und thermischer Analyse elektrischer Maschinen mit Ansys CAD Electronic Desktop und MATLAB.' },
+                        { en: 'Hosting regular code review technical sessions held in German and English as per team requirements', de: 'Durchführung regelmäßiger Code-Review-Sitzungen auf Deutsch und Englisch nach Teamanforderungen' }
+                    ]
+                },
+                {
+                    id: 'tcs',
+                    title: { en: 'Assistant Systems Engineer', de: 'Assistant Systems Engineer' },
+                    company: { en: 'TATA CONSULTANCY SERVICES Ltd.', de: 'TATA CONSULTANCY SERVICES Ltd.' },
+                    date: { en: '07/2021 – 07/2023', de: '07/2021 – 07/2023' },
+                    location: { en: 'India', de: 'Indien' },
+                    bullets: [
+                        { en: 'Development with Python, C++, Dart, Java, React.', de: 'Entwicklung mit Python, C++, Dart, Java, React.' },
+                        { en: 'MS Office and Linux-Unix environment handling', de: 'Umgang mit MS Office und Linux-Unix-Umgebung' },
+                        { en: 'Review meetings with on site rangers', de: 'Review-Meetings mit vor Ort tätigen Rangern' }
+                    ]
+                }
+            ],
+            education: [
+                {
+                    id: 'msc',
+                    degree: { en: 'M.Sc. Electronics Engineering', de: 'M.Sc. Elektrotechnik' },
+                    institution: { en: 'City University of Applied Sciences Bremen', de: 'Hochschule Bremen' },
+                    date: { en: '2023 – CURRENT', de: '2023 – HEUTE' },
+                    location: { en: 'Bremen, Germany', de: 'Bremen, Deutschland' },
+                    bullets: [
+                        { en: 'Design and Implementation of Universal Biquad Filter for analog and mixed signal systems', de: 'Entwurf und Implementierung eines universellen Biquad-Filters für analoge und Mixed-Signal-Systeme' },
+                        { en: 'Modelling and Design of PCB in Altium Designer, KiCAD', de: 'Modellierung und Design von PCBs in Altium Designer, KiCAD' },
+                        { en: 'Goal oriented approach of meeting timelines and getting things done', de: 'Zielorientierter Ansatz zur Einhaltung von Zeitplänen' }
+                    ]
+                },
+                {
+                    id: 'btech',
+                    degree: { en: 'B.Tech in Electrical and Electronics Engineering', de: 'B.Tech in Elektrotechnik und Elektronik' },
+                    institution: { en: 'APJ Abdul Kalam Technological University', de: 'APJ Abdul Kalam Technological University' },
+                    date: { en: 'March 2017 – March 2021', de: 'März 2017 – März 2021' },
+                    location: { en: 'India', de: 'Indien' },
+                    bullets: [
+                        { en: 'engineering calculus and engineering analytical and problem solving papers', de: 'Ingenieurmathematik und analytische Problemlösungsfächer' },
+                        { en: 'circuit design and simulation using Python', de: 'Schaltungsdesign und Simulation mit Python' }
+                    ]
+                }
+            ],
+            projects: [
+                {
+                    id: 'website',
+                    title: { en: 'Personal Website', de: 'Persönliche Website' },
+                    bullets: [
+                        { en: 'Hosting Personal website on Github domain: ryanromeodev.github.io/personal-site/', de: 'Persönliche Website auf Github-Domain hosten: ryanromeodev.github.io/personal-site/' }
+                    ]
+                },
+                {
+                    id: 'flutter',
+                    title: { en: 'Flutter App', de: 'Flutter App' },
+                    bullets: [
+                        { en: 'Developed Android Dart/Flutter Application for plant inventory management', de: 'Entwicklung einer Android Dart/Flutter-Anwendung für Pflanzeninventarverwaltung' }
+                    ]
+                }
+            ],
+            skills: [
+                { en: 'Python, C++, Dart, Java, React', de: 'Python, C++, Dart, Java, React' },
+                { en: 'PCB design, Automation, GUI development', de: 'PCB-Design, Automatisierung, GUI-Entwicklung' }
+            ],
+            languages: [
+                { en: 'English - Fluent', de: 'Englisch - Fließend' },
+                { en: 'German - Professional (B2/C1)', de: 'Deutsch - Verhandlungssicher (B2/C1)' }
+            ]
+        };
+
+        // Fixed personal details
         const FIXED_DETAILS = {
             name: "Ryan Romeo",
-            title: "Electronics and Computer Science Engineer",
             email: "ryanromeo10@gmail.com",
             phone: "(+49) 15 212 669675",
             address: "Luisental 29B, Bremen, 28359 Germany"
         };
 
-        let cart = [];
+        // ==================== CART & UI ====================
+        let cart = []; // each item: { text, section, parentId, parentType, parentTitle, company, date, location } etc.
+        let currentLanguage = 'en';
+
+        // Update filename preview when job role changes
+        document.getElementById('jobRoleInput').addEventListener('input', function(e) {
+            const jobRole = e.target.value.trim().replace(/\s+/g, '_') || 'CV';
+            document.getElementById('filenamePreview').textContent = `ryan_${jobRole}_CV.pdf`;
+            document.getElementById('cvJobRoleDisplay').textContent = e.target.value || 'Electronics Engineer';
+        });
+
+        // Populate tabs with data
+        function renderTabs() {
+            // Work Experience tab
+            const workTab = document.getElementById('tab1');
+            workTab.innerHTML = '';
+            cvData.workExperience.forEach(job => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `<h2>${job.title.en}</h2>`;
+                const grid = document.createElement('div');
+                grid.className = 'sentence-grid';
+                job.bullets.forEach(bullet => {
+                    const card = document.createElement('div');
+                    card.className = 'sentence-card';
+                    card.dataset.section = 'Work Experience';
+                    card.dataset.parentId = job.id;
+                    card.dataset.parentTitleEn = job.title.en;
+                    card.dataset.parentTitleDe = job.title.de;
+                    card.dataset.companyEn = job.company.en;
+                    card.dataset.companyDe = job.company.de;
+                    card.dataset.dateEn = job.date.en;
+                    card.dataset.dateDe = job.date.de;
+                    card.dataset.locationEn = job.location.en;
+                    card.dataset.locationDe = job.location.de;
+                    
+                    card.innerHTML = `
+                        <div class="sentence-content">
+                            <textarea class="sentence-text" data-en="${bullet.en.replace(/"/g, '&quot;')}" data-de="${bullet.de.replace(/"/g, '&quot;')}">${currentLanguage === 'en' ? bullet.en : bullet.de}</textarea>
+                        </div>
+                        <div class="button-group">
+                            <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                            <button class="add-btn" onclick="addToCart(this)">Add</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                sectionDiv.appendChild(grid);
+                workTab.appendChild(sectionDiv);
+            });
+
+            // Education tab
+            const eduTab = document.getElementById('tab2');
+            eduTab.innerHTML = '';
+            cvData.education.forEach(edu => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `<h2>${edu.degree.en}</h2>`;
+                const grid = document.createElement('div');
+                grid.className = 'sentence-grid';
+                edu.bullets.forEach(bullet => {
+                    const card = document.createElement('div');
+                    card.className = 'sentence-card';
+                    card.dataset.section = 'Education';
+                    card.dataset.parentId = edu.id;
+                    card.dataset.parentTitleEn = edu.degree.en;
+                    card.dataset.parentTitleDe = edu.degree.de;
+                    card.dataset.companyEn = edu.institution.en; // reuse company field for institution
+                    card.dataset.companyDe = edu.institution.de;
+                    card.dataset.dateEn = edu.date.en;
+                    card.dataset.dateDe = edu.date.de;
+                    card.dataset.locationEn = edu.location.en;
+                    card.dataset.locationDe = edu.location.de;
+                    
+                    card.innerHTML = `
+                        <div class="sentence-content">
+                            <textarea class="sentence-text" data-en="${bullet.en.replace(/"/g, '&quot;')}" data-de="${bullet.de.replace(/"/g, '&quot;')}">${currentLanguage === 'en' ? bullet.en : bullet.de}</textarea>
+                        </div>
+                        <div class="button-group">
+                            <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                            <button class="add-btn" onclick="addToCart(this)">Add</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                sectionDiv.appendChild(grid);
+                eduTab.appendChild(sectionDiv);
+            });
+
+            // Projects tab
+            const projTab = document.getElementById('tab3');
+            projTab.innerHTML = '';
+            cvData.projects.forEach(proj => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `<h2>${proj.title.en}</h2>`;
+                const grid = document.createElement('div');
+                grid.className = 'sentence-grid';
+                proj.bullets.forEach(bullet => {
+                    const card = document.createElement('div');
+                    card.className = 'sentence-card';
+                    card.dataset.section = 'Projects';
+                    card.dataset.parentId = proj.id;
+                    card.dataset.parentTitleEn = proj.title.en;
+                    card.dataset.parentTitleDe = proj.title.de;
+                    
+                    card.innerHTML = `
+                        <div class="sentence-content">
+                            <textarea class="sentence-text" data-en="${bullet.en.replace(/"/g, '&quot;')}" data-de="${bullet.de.replace(/"/g, '&quot;')}">${currentLanguage === 'en' ? bullet.en : bullet.de}</textarea>
+                        </div>
+                        <div class="button-group">
+                            <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                            <button class="add-btn" onclick="addToCart(this)">Add</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                sectionDiv.appendChild(grid);
+                projTab.appendChild(sectionDiv);
+            });
+
+            // Skills & Languages tab
+            const skillsTab = document.getElementById('tab4');
+            skillsTab.innerHTML = `
+                <h2><span class="section-icon">⚡</span> Skills</h2>
+                <div class="sentence-grid" id="skillsGrid"></div>
+                <h2><span class="section-icon">🌍</span> Languages</h2>
+                <div class="sentence-grid" id="langGrid"></div>
+            `;
+            const skillsGrid = document.getElementById('skillsGrid');
+            cvData.skills.forEach(skill => {
+                const card = document.createElement('div');
+                card.className = 'sentence-card';
+                card.dataset.section = 'Skills';
+                card.innerHTML = `
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="${skill.en.replace(/"/g, '&quot;')}" data-de="${skill.de.replace(/"/g, '&quot;')}">${currentLanguage === 'en' ? skill.en : skill.de}</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
+                `;
+                skillsGrid.appendChild(card);
+            });
+            const langGrid = document.getElementById('langGrid');
+            cvData.languages.forEach(lang => {
+                const card = document.createElement('div');
+                card.className = 'sentence-card';
+                card.dataset.section = 'Languages';
+                card.innerHTML = `
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="${lang.en.replace(/"/g, '&quot;')}" data-de="${lang.de.replace(/"/g, '&quot;')}">${currentLanguage === 'en' ? lang.en : lang.de}</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
+                `;
+                langGrid.appendChild(card);
+            });
+        }
+
+        // Call initially
+        renderTabs();
 
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
@@ -732,10 +933,22 @@
             const sentence = textarea.value;
             const section = card.dataset.section;
             
-            cart.push({ 
+            // Extract metadata from dataset
+            const item = {
                 text: sentence,
-                section: section
-            });
+                section: section,
+                parentId: card.dataset.parentId,
+                parentTitleEn: card.dataset.parentTitleEn,
+                parentTitleDe: card.dataset.parentTitleDe,
+                companyEn: card.dataset.companyEn,
+                companyDe: card.dataset.companyDe,
+                dateEn: card.dataset.dateEn,
+                dateDe: card.dataset.dateDe,
+                locationEn: card.dataset.locationEn,
+                locationDe: card.dataset.locationDe
+            };
+            
+            cart.push(item);
             
             button.innerText = (currentLanguage === 'en' ? 'Added!' : 'Hinzugefügt');
             button.classList.add('added');
@@ -774,7 +987,7 @@
                         <button class="remove-btn" onclick="removeFromCart(${idx})">${currentLanguage === 'en' ? 'Remove' : 'Entfernen'}</button>
                     </div>
                     <div style="font-size:11px; color:#666; padding-left:8px;">
-                        ${item.section}
+                        ${item.section} ${item.parentTitleEn ? '- ' + item.parentTitleEn : ''}
                     </div>
                 </div>`;
             });
@@ -814,68 +1027,108 @@
 
         function previewCV() {
             const cvContent = document.getElementById('cvContent');
-            const grouped = {};
+            
+            // Build sections map
+            const sections = {};
             
             cart.forEach(item => {
-                if (!grouped[item.section]) grouped[item.section] = [];
-                grouped[item.section].push(item.text);
+                const section = item.section;
+                if (!sections[section]) {
+                    sections[section] = { jobs: {}, items: [] };
+                }
+                
+                if (item.parentId) {
+                    // This bullet belongs to a job/degree
+                    const jobId = item.parentId;
+                    if (!sections[section].jobs[jobId]) {
+                        sections[section].jobs[jobId] = {
+                            titleEn: item.parentTitleEn,
+                            titleDe: item.parentTitleDe,
+                            companyEn: item.companyEn,
+                            companyDe: item.companyDe,
+                            dateEn: item.dateEn,
+                            dateDe: item.dateDe,
+                            locationEn: item.locationEn,
+                            locationDe: item.locationDe,
+                            bullets: []
+                        };
+                    }
+                    sections[section].jobs[jobId].bullets.push(item.text);
+                } else {
+                    // Standalone item (skills, languages, projects without parent)
+                    sections[section].items.push(item.text);
+                }
             });
 
+            // Desired section order
+            const sectionOrder = ['Work Experience', 'Education', 'Projects', 'Skills', 'Languages'];
+            
             let html = '';
-            for (let section in grouped) {
+            
+            for (let section of sectionOrder) {
+                if (!sections[section]) continue;
+                
                 html += `<div class="cv-section">
                     <div class="cv-section-title">${section}</div>`;
                 
-                grouped[section].forEach((sentence, index) => {
-                    if (section === 'Work Experience' || section === 'Education') {
-                        // Format as job/education entries
+                if (section === 'Work Experience' || section === 'Education') {
+                    // For each job/degree in this section
+                    const jobs = sections[section].jobs;
+                    for (let jobId in jobs) {
+                        const job = jobs[jobId];
+                        const title = currentLanguage === 'en' ? job.titleEn : job.titleDe;
+                        const company = currentLanguage === 'en' ? job.companyEn : job.companyDe;
+                        const date = currentLanguage === 'en' ? job.dateEn : job.dateDe;
+                        const location = currentLanguage === 'en' ? job.locationEn : job.locationDe;
+                        
                         html += `<div class="cv-item">
                             <div class="cv-item-header">
-                                <span class="cv-item-title">Position ${index + 1}</span>
-                                <span class="cv-item-date">2024</span>
+                                <span class="cv-item-title">${title || ''}</span>
+                                <span class="cv-item-date">${date || ''}</span>
                             </div>
-                            <div class="cv-item-subtitle">Company Name</div>
+                            <div class="cv-item-subtitle">${company || ''} <span class="cv-item-location">📍 ${location || ''}</span></div>
                             <div class="cv-item-description">
-                                <ul><li>${sentence}</li></ul>
-                            </div>
-                        </div>`;
-                    } else if (section === 'Skills') {
-                        html += `<div class="cv-tags"><span class="cv-tag">${sentence}</span></div>`;
-                    } else if (section === 'Languages') {
-                        html += `<div class="cv-item">
-                            <div class="cv-item-description">
-                                <ul><li>${sentence}</li></ul>
-                            </div>
-                        </div>`;
-                    } else {
-                        html += `<div class="cv-item">
-                            <div class="cv-item-description">
-                                <ul><li>${sentence}</li></ul>
-                            </div>
-                        </div>`;
+                                <ul>`;
+                        job.bullets.forEach(bullet => {
+                            html += `<li>${bullet}</li>`;
+                        });
+                        html += `</ul></div></div>`;
                     }
-                });
+                } else if (section === 'Skills') {
+                    // Skills as tags
+                    sections[section].items.forEach(item => {
+                        html += `<div class="cv-tags"><span class="cv-tag">${item}</span></div>`;
+                    });
+                } else {
+                    // Projects, Languages as bullet list
+                    html += `<div class="cv-item"><div class="cv-item-description"><ul>`;
+                    sections[section].items.forEach(item => {
+                        html += `<li>${item}</li>`;
+                    });
+                    html += `</ul></div></div>`;
+                }
                 
                 html += `</div>`;
             }
-
+            
             cvContent.innerHTML = html;
             document.getElementById('cvPreview').classList.add('active');
         }
 
-        async function generateAndDownloadPDF() {
+        async function previewAndDownloadCV() {
             if (cart.length === 0) {
                 alert(currentLanguage === 'en' ? 'Cart is empty. Add some sentences first.' : 'Warenkorb ist leer. Füge zuerst Sätze hinzu.');
                 return;
             }
 
-            // First show the preview with current cart
+            const jobRole = document.getElementById('jobRoleInput').value.trim() || 'CV';
+            document.getElementById('cvJobRoleDisplay').textContent = jobRole;
+            
             previewCV();
             
             const cvPreview = document.getElementById('cvPreview');
             
             try {
-                // Use html2canvas to capture the CV preview
                 const canvas = await html2canvas(cvPreview, {
                     scale: 2,
                     backgroundColor: '#ffffff',
@@ -896,7 +1149,6 @@
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 
-                // Calculate image dimensions to fit PDF
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
                 const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
@@ -904,15 +1156,15 @@
                 const height = imgHeight * ratio;
                 
                 pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-                pdf.save('ryan_romeo_cv.pdf');
+                
+                const filename = `ryan_${jobRole.replace(/\s+/g, '_')}_CV.pdf`;
+                pdf.save(filename);
                 
             } catch (error) {
                 console.error('PDF generation error:', error);
                 alert('Error generating PDF. Please try again.');
             }
         }
-
-        let currentLanguage = 'en';
 
         function setLanguage(lang) {
             currentLanguage = lang;
@@ -930,6 +1182,7 @@
                 langEn.classList.remove('active');
             }
             
+            // Update all textareas
             document.querySelectorAll('.sentence-text').forEach(textarea => {
                 const enText = textarea.getAttribute('data-en');
                 const deText = textarea.getAttribute('data-de');
@@ -938,28 +1191,27 @@
                 }
             });
             
+            // Update static texts
             document.querySelectorAll('[data-en][data-de]:not(textarea):not(.add-btn):not(.reset-btn)').forEach(el => {
                 el.innerText = el.getAttribute(`data-${lang}`);
             });
             
+            // Update buttons
             document.querySelectorAll('.add-btn').forEach(btn => {
                 if (!btn.classList.contains('added')) {
                     btn.innerText = lang === 'en' ? 'Add' : 'Hinzufügen';
                 }
             });
-            
             document.querySelectorAll('.reset-btn').forEach(btn => {
                 btn.innerText = '↺ ' + (lang === 'en' ? 'Reset' : 'Zurücksetzen');
             });
-            
             document.querySelectorAll('.remove-btn').forEach(btn => {
                 btn.innerText = lang === 'en' ? 'Remove' : 'Entfernen';
             });
             
             const footer = document.getElementById('mainFooter');
-            footer.innerText = lang === 'en' ? 'Edit • Add to cart • Preview → download CV with photo' : 'Bearbeiten • Hinzufügen • Vorschau → CV mit Foto';
-            
-            document.getElementById('subtitle').innerText = lang === 'en' ? 'Edit sentences • Add to cart • Preview CV → download PDF' : 'Sätze bearbeiten • Hinzufügen • CV Vorschau → PDF';
+            footer.innerText = lang === 'en' ? 'Colorful UI • Black & White CV • Structured data' : 'Bunte Oberfläche • Schwarz-Weiß CV • Strukturierte Daten';
+            document.getElementById('subtitle').innerText = lang === 'en' ? 'Edit sentences • Add to cart • Build your CV → download black & white PDF' : 'Sätze bearbeiten • Hinzufügen • CV erstellen → schwarz-weiß PDF';
         }
 
         function switchTab(tabId) {
