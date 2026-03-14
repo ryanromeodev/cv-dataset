@@ -2,72 +2,92 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 Multi-Tab CV Sentence Bank</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>📋 CV Sentence Bank</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #f5f5f5;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        h1 {
-            color: #333;
-            border-bottom: 3px solid #007bff;
-            padding-bottom: 10px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 10px;
+            min-height: 100vh;
         }
         
-        /* Tab Navigation */
+        /* Header */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin: 10px 0 5px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #007bff;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        /* Mobile-optimized Tab Navigation */
         .tab-container {
-            margin: 20px 0;
+            margin: 10px 0 15px;
         }
         .tabs {
-            display: flex;
-            gap: 5px;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            background: #f5f5f5;
         }
         .tab-btn {
-            padding: 12px 25px;
+            padding: 10px 4px;
             background: #e9ecef;
             border: none;
-            border-radius: 8px 8px 0 0;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
             color: #495057;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 2px;
+            word-break: break-word;
+            line-height: 1.2;
+            min-height: 60px;
         }
-        .tab-btn:hover {
-            background: #dee2e6;
+        .tab-btn span {
+            font-size: 18px;
         }
         .tab-btn.active {
             background: #007bff;
             color: white;
         }
+
+        /* Tab Content */
         .tab-content {
             display: none;
-            padding: 20px;
+            padding: 15px 10px;
             background: white;
-            border-radius: 0 8px 8px 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .tab-content.active {
             display: block;
         }
 
-        /* Sentence Cards */
+        /* Section Headers */
         h2 {
             color: #007bff;
-            margin-top: 30px;
-            font-size: 1.5em;
+            font-size: 18px;
+            margin: 20px 0 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         h2:first-child {
             margin-top: 0;
@@ -75,76 +95,134 @@
         .badge {
             background: #e7f3ff;
             color: #007bff;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: normal;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
         }
+
+        /* Mobile-optimized Cards */
         .sentence-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-            gap: 15px;
-            margin: 15px 0 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 10px 0 20px;
         }
         .sentence-card {
             background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            padding: 12px;
             display: flex;
             align-items: flex-start;
-            gap: 10px;
-            transition: all 0.2s;
+            gap: 8px;
             border-left: 4px solid #007bff;
-        }
-        .sentence-card:hover {
-            box-shadow: 0 5px 15px rgba(0,123,255,0.2);
-            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .sentence-text {
             flex: 1;
             font-size: 14px;
             line-height: 1.5;
-            color: #444;
-            padding: 5px;
+            color: #333;
+            padding: 2px 0;
+            word-break: break-word;
         }
         .copy-btn {
             background: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
-            padding: 8px 15px;
+            border-radius: 20px;
+            padding: 8px 12px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 600;
             min-width: 60px;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.3);
         }
-        .copy-btn:hover {
+        .copy-btn:active {
+            transform: scale(0.95);
             background: #0056b3;
         }
         .copy-btn.copied {
             background: #28a745;
         }
-        
-        /* Tab-specific colors */
+
+        /* Tab-specific active colors */
         .tab-btn[data-tab="tab1"].active { background: #007bff; }
         .tab-btn[data-tab="tab2"].active { background: #28a745; }
         .tab-btn[data-tab="tab3"].active { background: #dc3545; }
         .tab-btn[data-tab="tab4"].active { background: #ffc107; color: #333; }
+
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-btn:active {
+            background: #f0f0f0;
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* Portrait mode optimizations */
+        @media (max-width: 380px) {
+            .tab-btn {
+                font-size: 11px;
+                padding: 8px 2px;
+            }
+            .tab-btn span {
+                font-size: 16px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .sentence-card {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>📋 Multi-Tab CV Sentence Bank</h1>
-    <p>Different tabs for different job types. Click copy to use sentences instantly!</p>
+    <h1>📋 CV Sentence Bank</h1>
+    <div class="subtitle">Tap a tab, then tap Copy to use sentences</div>
 
     <!-- Tab Navigation -->
     <div class="tab-container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1">💻 Software Dev</button>
-            <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2">📊 Management</button>
-            <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3">🎨 Design</button>
-            <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4">📝 Generic</button>
+            <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1">
+                <span>💻</span> Dev
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2">
+                <span>📊</span> Mgmt
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3">
+                <span>🎨</span> Design
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4">
+                <span>📝</span> Generic
+            </button>
         </div>
 
         <!-- ========== TAB 1: SOFTWARE DEVELOPMENT ========== -->
@@ -336,6 +414,17 @@
         </div>
     </div>
 
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="action-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <span>⬆️</span> Back to top
+        </button>
+    </div>
+
+    <div class="footer-note">
+        Tap any Copy button • Sentences go to clipboard
+    </div>
+
     <script>
         function copyText(button) {
             const sentenceDiv = button.parentElement.querySelector('.sentence-text');
@@ -372,6 +461,9 @@
             // Show selected tab and activate button
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Scroll to top when switching tabs on mobile
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
     </script>
 </body>
