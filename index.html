@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>📋 CV Sentence Bank | DE/EN</title>
+    <title>📋 CV Builder · editable & PDF</title>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -17,7 +19,6 @@
             min-height: 100vh;
         }
         
-        /* Header with Language Toggle */
         .header {
             display: flex;
             align-items: center;
@@ -36,7 +37,6 @@
             gap: 5px;
         }
         
-        /* Beautiful Language Toggle Switch */
         .lang-toggle {
             display: flex;
             align-items: center;
@@ -87,11 +87,7 @@
         .lang-slider.en {
             transform: translateX(100%);
         }
-        
-        /* Flag emojis */
-        .flag {
-            font-size: 18px;
-        }
+        .flag { font-size: 18px; }
 
         .subtitle {
             color: #666;
@@ -99,7 +95,6 @@
             margin-bottom: 15px;
         }
 
-        /* Mobile-optimized Tab Navigation */
         .tab-container {
             margin: 10px 0 15px;
         }
@@ -127,15 +122,12 @@
             line-height: 1.2;
             min-height: 60px;
         }
-        .tab-btn span {
-            font-size: 18px;
-        }
-        .tab-btn.active {
-            background: #007bff;
-            color: white;
-        }
+        .tab-btn span { font-size: 18px; }
+        .tab-btn.active { background: #007bff; color: white; }
+        .tab-btn[data-tab="tab2"].active { background: #28a745; }
+        .tab-btn[data-tab="tab3"].active { background: #dc3545; }
+        .tab-btn[data-tab="tab4"].active { background: #ffc107; color: #333; }
 
-        /* Tab Content */
         .tab-content {
             display: none;
             padding: 15px 10px;
@@ -143,11 +135,8 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content.active { display: block; }
 
-        /* Section Headers */
         h2 {
             color: #007bff;
             font-size: 18px;
@@ -157,9 +146,7 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        h2:first-child {
-            margin-top: 0;
-        }
+        h2:first-child { margin-top: 0; }
         .badge {
             background: #e7f3ff;
             color: #007bff;
@@ -170,7 +157,6 @@
             white-space: nowrap;
         }
 
-        /* Mobile-optimized Cards */
         .sentence-grid {
             display: flex;
             flex-direction: column;
@@ -182,53 +168,84 @@
             border-radius: 10px;
             padding: 12px;
             display: flex;
-            align-items: flex-start;
-            gap: 8px;
+            flex-direction: column;
+            gap: 10px;
             border-left: 4px solid #007bff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .sentence-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            width: 100%;
         }
         .sentence-text {
             flex: 1;
             font-size: 14px;
             line-height: 1.5;
             color: #333;
-            padding: 2px 0;
-            word-break: break-word;
+            padding: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
         }
-        .copy-btn {
-            background: #007bff;
+        .sentence-text:focus {
+            outline: 2px solid #007bff;
+            border-color: transparent;
+        }
+        .button-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .add-btn {
+            background: #28a745;
             color: white;
             border: none;
             border-radius: 20px;
-            padding: 8px 12px;
+            padding: 8px 16px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            min-width: 60px;
+            min-width: 70px;
             transition: all 0.2s;
-            flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+            box-shadow: 0 2px 4px rgba(40,167,69,0.3);
         }
-        .copy-btn:active {
+        .add-btn:active {
             transform: scale(0.95);
-            background: #0056b3;
+            background: #1e7e34;
         }
-        .copy-btn.copied {
-            background: #28a745;
+        .add-btn.added {
+            background: #ffc107;
+            color: #333;
+        }
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 70px;
+            transition: all 0.2s;
+        }
+        .reset-btn:active {
+            transform: scale(0.95);
+            background: #5a6268;
         }
 
-        /* Tab-specific active colors */
-        .tab-btn[data-tab="tab1"].active { background: #007bff; }
-        .tab-btn[data-tab="tab2"].active { background: #28a745; }
-        .tab-btn[data-tab="tab3"].active { background: #dc3545; }
-        .tab-btn[data-tab="tab4"].active { background: #ffc107; color: #333; }
-
-        /* Quick actions */
         .quick-actions {
             display: flex;
             gap: 10px;
             margin: 15px 0;
             flex-wrap: wrap;
+            align-items: center;
         }
         .action-btn {
             background: white;
@@ -242,11 +259,85 @@
             align-items: center;
             gap: 5px;
         }
-        .action-btn:active {
-            background: #f0f0f0;
+        .action-btn:active { background: #f0f0f0; }
+        .action-btn.primary {
+            background: #007bff;
+            color: white;
+            border: none;
+        }
+        .cart-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 5px;
         }
 
-        /* Footer */
+        .cart-view {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 20px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 15px;
+        }
+        .cart-view.active { display: block; }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .cart-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-left: 4px solid #007bff;
+        }
+        .cart-item-content {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .cart-item-text {
+            flex: 1;
+            font-size: 14px;
+            padding: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+        }
+        .cart-item-text:focus {
+            outline: 2px solid #007bff;
+            border-color: transparent;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .cart-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
         .footer-note {
             text-align: center;
             margin-top: 20px;
@@ -254,319 +345,342 @@
             font-size: 12px;
         }
 
-        /* Portrait mode optimizations */
         @media (max-width: 380px) {
-            .tab-btn {
-                font-size: 11px;
-                padding: 8px 2px;
-            }
-            .tab-btn span {
-                font-size: 16px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-            .sentence-card {
-                padding: 10px;
-            }
-            .lang-toggle {
-                width: 120px;
-                height: 38px;
-            }
-            .lang-option {
-                padding: 6px 8px;
-                font-size: 12px;
-            }
+            .tab-btn { font-size: 11px; padding: 8px 2px; }
+            .tab-btn span { font-size: 16px; }
+            h1 { font-size: 20px; }
+            .lang-toggle { width: 120px; height: 38px; }
+            .lang-option { padding: 6px 8px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
-    <!-- Header with Language Toggle -->
     <div class="header">
-        <h1>📋 CV Sentence Bank</h1>
-        
-        <!-- Beautiful Language Toggle -->
+        <h1>📋 CV Builder <span style="font-size: 14px; color: #666;">(editable)</span></h1>
         <div class="lang-toggle" id="langToggle">
             <div class="lang-slider en" id="langSlider"></div>
-            <button class="lang-option active" onclick="setLanguage('en')" id="langEn">
-                <span class="flag">🇬🇧</span> EN
-            </button>
-            <button class="lang-option" onclick="setLanguage('de')" id="langDe">
-                <span class="flag">🇩🇪</span> DE
-            </button>
+            <button class="lang-option active" onclick="setLanguage('en')" id="langEn"><span class="flag">🇬🇧</span> EN</button>
+            <button class="lang-option" onclick="setLanguage('de')" id="langDe"><span class="flag">🇩🇪</span> DE</button>
         </div>
     </div>
     
-    <div class="subtitle" id="subtitle">Different tabs for different job types. Click copy to use sentences instantly!</div>
+    <div class="subtitle" id="subtitle">Edit sentences • Add to cart • Next → download CV-style PDF</div>
 
-    <!-- Tab Navigation -->
-    <div class="tab-container">
+    <div class="tab-container" id="tabContainer">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1">
-                <span>💻</span> <span class="tab-text" data-en="Dev" data-de="Entw">Dev</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2">
-                <span>📊</span> <span class="tab-text" data-en="Mgmt" data-de="Mgmt">Mgmt</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3">
-                <span>🎨</span> <span class="tab-text" data-en="Design" data-de="Design">Design</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4">
-                <span>📝</span> <span class="tab-text" data-en="Generic" data-de="Allg">Generic</span>
-            </button>
+            <button class="tab-btn active" onclick="switchTab('tab1')" data-tab="tab1"><span>💻</span> <span class="tab-text" data-en="Dev" data-de="Entw">Dev</span></button>
+            <button class="tab-btn" onclick="switchTab('tab2')" data-tab="tab2"><span>📊</span> <span class="tab-text" data-en="Mgmt" data-de="Mgmt">Mgmt</span></button>
+            <button class="tab-btn" onclick="switchTab('tab3')" data-tab="tab3"><span>🎨</span> <span class="tab-text" data-en="Design" data-de="Design">Design</span></button>
+            <button class="tab-btn" onclick="switchTab('tab4')" data-tab="tab4"><span>📝</span> <span class="tab-text" data-en="Generic" data-de="Allg">Generic</span></button>
         </div>
 
-        <!-- ========== TAB 1: SOFTWARE DEVELOPMENT ========== -->
+        <!-- Tab1 Dev -->
         <div id="tab1" class="tab-content active">
-            <!-- Professional Summary -->
             <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects." data-de="Senior Full-Stack-Entwickler mit 7+ Jahren Erfahrung in der Entwicklung skalierbarer Webanwendungen mit Python, Django und React. Leitete Teams von 5+ Entwicklern und lieferte 15+ erfolgreiche Projekte ab.">Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab1" data-section="Professional Summary">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects." data-de="Senior Full-Stack-Entwickler mit 7+ Jahren Erfahrung in der Entwicklung skalierbarer Webanwendungen mit Python, Django und React. Leitete Teams von 5+ Entwicklern und lieferte 15+ erfolgreiche Projekte ab.">Senior Full-Stack Developer with 7+ years experience building scalable web applications using Python, Django, and React. Led teams of 5+ developers and delivered 15+ successful projects.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%." data-de="Ergebnisorientierter Softwareentwickler mit Spezialisierung auf Cloud-Architektur und Microservices. AWS-zertifiziert mit nachgewiesener Erfolgsbilanz bei der Optimierung der Systemleistung und Senkung der Kosten um 40%.">Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab1" data-section="Professional Summary">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%." data-de="Ergebnisorientierter Softwareentwickler mit Spezialisierung auf Cloud-Architektur und Microservices. AWS-zertifiziert mit nachgewiesener Erfolgsbilanz bei der Optimierung der Systemleistung und Senkung der Kosten um 40%.">Results-oriented Software Engineer specializing in cloud architecture and microservices. AWS Certified with proven track record of optimizing system performance and reducing costs by 40%.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Technical Achievements -->
             <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Technical Achievements" data-de="Technische Erfolge">Technical Achievements</span> <span class="badge" data-en="Under Experience" data-de="Bei Erfahrung">Under Experience</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%." data-de="Architektur und Bereitstellung von Microservices mit Docker und Kubernetes, Verbesserung der Skalierbarkeit und Reduzierung der Bereitstellungszeit um 70%.">Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab1" data-section="Technical Achievements">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%." data-de="Architektur und Bereitstellung von Microservices mit Docker und Kubernetes, Verbesserung der Skalierbarkeit und Reduzierung der Bereitstellungszeit um 70%.">Architected and deployed microservices using Docker and Kubernetes, improving scalability and reducing deployment time by 70%.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms." data-de="Optimierte PostgreSQL-Abfragen und implementierte Redis-Caching, Reduzierung der durchschnittlichen API-Antwortzeit von 500ms auf 50ms.">Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Built CI/CD pipelines using GitHub Actions and Jenkins, achieving 99.9% deployment success rate and reducing manual effort." data-de="Erstellung von CI/CD-Pipelines mit GitHub Actions und Jenkins, Erreichung einer 99,9%igen Bereitstellungserfolgsquote und Reduzierung des manuellen Aufwands.">Built CI/CD pipelines using GitHub Actions and Jenkins, achieving 99.9% deployment success rate and reducing manual effort.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Project Highlights -->
-            <h2><span class="section-icon">🚀</span> <span class="section-title" data-en="Key Projects" data-de="Schlüsselprojekte">Key Projects</span> <span class="badge" data-en="Portfolio" data-de="Portfolio">Portfolio</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Led development of e-commerce platform handling 100K+ daily users, implementing payment integration and real-time inventory management." data-de="Leitung der Entwicklung einer E-Commerce-Plattform mit 100.000+ täglichen Nutzern, Implementierung der Zahlungsintegration und Echtzeit-Bestandsverwaltung.">Led development of e-commerce platform handling 100K+ daily users, implementing payment integration and real-time inventory management.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Created data visualization dashboard processing 1M+ records daily, used by 50+ business analysts for decision making." data-de="Erstellung eines Datenvisualisierungs-Dashboards, das täglich 1M+ Datensätze verarbeitet, das von 50+ Business-Analysten für Entscheidungen genutzt wird.">Created data visualization dashboard processing 1M+ records daily, used by 50+ business analysts for decision making.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab1" data-section="Technical Achievements">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms." data-de="Optimierte PostgreSQL-Abfragen und implementierte Redis-Caching, Reduzierung der durchschnittlichen API-Antwortzeit von 500ms auf 50ms.">Optimized PostgreSQL queries and implemented Redis caching, reducing average API response time from 500ms to 50ms.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== TAB 2: MANAGEMENT ========== -->
+        <!-- Tab2 Management (abbreviated) -->
         <div id="tab2" class="tab-content">
-            <!-- Professional Summary -->
             <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified." data-de="Erfahrener technischer Projektmanager mit 8+ Jahren Führung von funktionsübergreifenden Teams zur termingerechten und budgetgerechten Lieferung komplexer Softwareprojekte. PMP- und Scrum-Master-zertifiziert.">Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Results-driven Engineering Manager skilled in team building, agile transformation, and strategic planning. Grew team from 5 to 20 engineers while maintaining 90% retention rate." data-de="Ergebnisorientierter Engineering Manager mit Fähigkeiten in Teambuilding, agiler Transformation und strategischer Planung. Vergrößerte das Team von 5 auf 20 Entwickler bei gleichzeitiger Beibehaltung einer 90%igen Mitarbeiterbindungsrate.">Results-driven Engineering Manager skilled in team building, agile transformation, and strategic planning. Grew team from 5 to 20 engineers while maintaining 90% retention rate.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Leadership Achievements -->
-            <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Leadership Achievements" data-de="Führungserfolge">Leadership Achievements</span> <span class="badge" data-en="Management Roles" data-de="Management-Rollen">Management Roles</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Managed portfolio of 10+ simultaneous projects worth $5M, delivering all within budget and achieving 95% client satisfaction rate." data-de="Verwaltung eines Portfolios von 10+ gleichzeitigen Projekten im Wert von 5 Mio. $, alle innerhalb des Budgets und mit einer Kundenzufriedenheitsrate von 95%.">Managed portfolio of 10+ simultaneous projects worth $5M, delivering all within budget and achieving 95% client satisfaction rate.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Implemented agile methodologies across 4 teams, increasing velocity by 60% and reducing time-to-market by 40%." data-de="Implementierung agiler Methoden in 4 Teams, Steigerung der Geschwindigkeit um 60% und Reduzierung der Time-to-Market um 40%.">Implemented agile methodologies across 4 teams, increasing velocity by 60% and reducing time-to-market by 40%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Mentored 12 junior developers, with 8 promoted to senior roles within 2 years. Established career development framework used company-wide." data-de="Betreuung von 12 Junior-Entwicklern, von denen 8 innerhalb von 2 Jahren in Senior-Rollen befördert wurden. Etablierung eines unternehmensweit genutzten Karriereentwicklungsrahmens.">Mentored 12 junior developers, with 8 promoted to senior roles within 2 years. Established career development framework used company-wide.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Process Improvements -->
-            <h2><span class="section-icon">⚡</span> <span class="section-title" data-en="Process Excellence" data-de="Prozessexzellenz">Process Excellence</span> <span class="badge" data-en="Achievements" data-de="Erfolge">Achievements</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Streamlined project estimation process, improving accuracy by 50% and reducing scope creep by 75%." data-de="Optimierung des Projektsschätzprozesses, Verbesserung der Genauigkeit um 50% und Reduzierung von Scope Creep um 75%.">Streamlined project estimation process, improving accuracy by 50% and reducing scope creep by 75%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Introduced OKR framework across engineering department, aligning 50+ employees with company goals and exceeding targets by 30%." data-de="Einführung des OKR-Rahmens in der gesamten Entwicklungsabteilung, Ausrichtung von 50+ Mitarbeitern auf Unternehmensziele und Übertreffen der Ziele um 30%.">Introduced OKR framework across engineering department, aligning 50+ employees with company goals and exceeding targets by 30%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab2" data-section="Professional Summary">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified." data-de="Erfahrener technischer Projektmanager mit 8+ Jahren Führung von funktionsübergreifenden Teams zur termingerechten und budgetgerechten Lieferung komplexer Softwareprojekte. PMP- und Scrum-Master-zertifiziert.">Experienced Technical Project Manager with 8+ years leading cross-functional teams to deliver complex software projects on time and under budget. PMP and Scrum Master certified.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== TAB 3: DESIGN ========== -->
+        <!-- Tab3 Design -->
         <div id="tab3" class="tab-content">
-            <!-- Professional Summary -->
             <h2><span class="section-icon">📌</span> <span class="section-title" data-en="Professional Summary" data-de="Berufliche Zusammenfassung">Professional Summary</span> <span class="badge" data-en="CV Header" data-de="CV-Kopf">CV Header</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies." data-de="Kreativer UI/UX-Designer mit 6 Jahren Erfahrung in der Gestaltung intuitiver digitaler Erlebnisse. Portfolio umfasst 20+ erfolgreiche Produkteinführungen für Fortune-500-Unternehmen.">Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="User-centered Product Designer skilled in end-to-end design process from research to high-fidelity prototypes. Advocate for accessibility and inclusive design." data-de="Nutzerzentrierter Produktdesigner mit Erfahrung im gesamten Designprozess von der Recherche bis zu hochauflösenden Prototypen. Verfechter von Barrierefreiheit und inklusivem Design.">User-centered Product Designer skilled in end-to-end design process from research to high-fidelity prototypes. Advocate for accessibility and inclusive design.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Design Achievements -->
-            <h2><span class="section-icon">🏆</span> <span class="section-title" data-en="Design Impact" data-de="Design-Wirkung">Design Impact</span> <span class="badge" data-en="Results" data-de="Ergebnisse">Results</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Redesigned mobile app interface resulting in 45% increase in user engagement and 4.8⭐ app store rating." data-de="Neugestaltung der mobilen App-Oberfläche, was zu einer Steigerung der Nutzerinteraktion um 45% und einer App-Store-Bewertung von 4,8⭐ führte.">Redesigned mobile app interface resulting in 45% increase in user engagement and 4.8⭐ app store rating.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Conducted user research with 100+ participants, leading to design changes that reduced user errors by 60%." data-de="Durchführung von Nutzerforschung mit 100+ Teilnehmern, was zu Designänderungen führte, die Nutzerfehler um 60% reduzierten.">Conducted user research with 100+ participants, leading to design changes that reduced user errors by 60%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Created design system adopted by 15+ product teams, ensuring consistency and reducing development time by 30%." data-de="Erstellung eines Designsystems, das von 15+ Produktteams übernommen wurde, Sicherstellung der Konsistenz und Reduzierung der Entwicklungszeit um 30%.">Created design system adopted by 15+ product teams, ensuring consistency and reducing development time by 30%.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab3" data-section="Professional Summary">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies." data-de="Kreativer UI/UX-Designer mit 6 Jahren Erfahrung in der Gestaltung intuitiver digitaler Erlebnisse. Portfolio umfasst 20+ erfolgreiche Produkteinführungen für Fortune-500-Unternehmen.">Creative UI/UX Designer with 6 years experience crafting intuitive digital experiences. Portfolio includes 20+ successful product launches for Fortune 500 companies.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== TAB 4: GENERIC / ALL PURPOSE ========== -->
+        <!-- Tab4 Generic -->
         <div id="tab4" class="tab-content">
-            <!-- Education -->
             <h2><span class="section-icon">🎓</span> <span class="section-title" data-en="Education" data-de="Ausbildung">Education</span> <span class="badge" data-en="Always relevant" data-de="Immer relevant">Always relevant</span></h2>
             <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA." data-de="Bachelor of Science in Informatik, Universitätsname, 2020. Abschluss Magna Cum Laude mit 3,8 GPA.">Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Master of Business Administration, University Name, 2023. Focus on Technology Management and Innovation." data-de="Master of Business Administration, Universitätsname, 2023. Schwerpunkt auf Technologiemanagement und Innovation.">Master of Business Administration, University Name, 2023. Focus on Technology Management and Innovation.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Certifications -->
-            <h2><span class="section-icon">📜</span> <span class="section-title" data-en="Certifications" data-de="Zertifizierungen">Certifications</span> <span class="badge" data-en="Add to skills" data-de="Zu Fähigkeiten">Add to skills</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="AWS Certified Solutions Architect - Professional (2023)" data-de="AWS-zertifizierter Lösungsarchitekt - Professional (2023)">AWS Certified Solutions Architect - Professional (2023)</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Certified ScrumMaster (CSM) with 3 years experience leading agile teams" data-de="Zertifizierter ScrumMaster (CSM) mit 3 Jahren Erfahrung in der Leitung agiler Teams">Certified ScrumMaster (CSM) with 3 years experience leading agile teams</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Google UX Design Professional Certificate (2022)" data-de="Google UX Design Professional Zertifikat (2022)">Google UX Design Professional Certificate (2022)</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Soft Skills -->
-            <h2><span class="section-icon">🤝</span> <span class="section-title" data-en="Core Competencies" data-de="Kernkompetenzen">Core Competencies</span> <span class="badge" data-en="Mix and match" data-de="Kombinierbar">Mix and match</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Excellent verbal and written communication skills, with experience presenting to C-level executives." data-de="Hervorragende mündliche und schriftliche Kommunikationsfähigkeiten, mit Erfahrung in Präsentationen vor C-Level-Führungskräften.">Excellent verbal and written communication skills, with experience presenting to C-level executives.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Strong analytical and problem-solving abilities, with track record of identifying and resolving complex issues." data-de="Starke analytische Fähigkeiten und Problemlösungskompetenz, mit nachgewiesener Erfolgsbilanz bei der Identifizierung und Lösung komplexer Probleme.">Strong analytical and problem-solving abilities, with track record of identifying and resolving complex issues.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Collaborative team player who thrives in fast-paced environments and adapts quickly to changing priorities." data-de="Kollaborativer Teamplayer, der in schnelllebigen Umgebungen aufblüht und sich schnell an wechselnde Prioritäten anpasst.">Collaborative team player who thrives in fast-paced environments and adapts quickly to changing priorities.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-            </div>
-
-            <!-- Language Skills -->
-            <h2><span class="section-icon">🌍</span> <span class="section-title" data-en="Languages" data-de="Sprachen">Languages</span> <span class="badge" data-en="If applicable" data-de="Falls zutreffend">If applicable</span></h2>
-            <div class="sentence-grid">
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Fluent in English and Spanish, with professional working proficiency in French." data-de="Fließend in Englisch und Spanisch, mit beruflichen Arbeitskenntnissen in Französisch.">Fluent in English and Spanish, with professional working proficiency in French.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
-                </div>
-                <div class="sentence-card">
-                    <div class="sentence-text" data-en="Native German speaker with business fluency in English and conversational Mandarin." data-de="Deutscher Muttersprachler mit verhandlungssicherem Englisch und Konversationskenntnissen in Mandarin.">Native German speaker with business fluency in English and conversational Mandarin.</div>
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                <div class="sentence-card" data-tab="tab4" data-section="Education">
+                    <div class="sentence-content">
+                        <textarea class="sentence-text" data-en="Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA." data-de="Bachelor of Science in Informatik, Universitätsname, 2020. Abschluss Magna Cum Laude mit 3,8 GPA.">Bachelor of Science in Computer Science, University Name, 2020. Graduated Magna Cum Laude with 3.8 GPA.</textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="reset-btn" onclick="resetSentence(this)">↺ Reset</button>
+                        <button class="add-btn" onclick="addToCart(this)">Add</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
     <div class="quick-actions">
         <button class="action-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span>⬆️</span> <span data-en="Back to top" data-de="Nach oben">Back to top</span>
+            <span>⬆️</span> <span data-en="Top" data-de="Nach oben">Top</span>
+        </button>
+        <button class="action-btn" onclick="clearCart()">
+            <span>🗑️</span> <span data-en="Clear cart" data-de="Warenkorb leeren">Clear cart</span>
+        </button>
+        <div style="flex:1; text-align:right;">
+            <span class="cart-badge" id="cartCount">0</span>
+        </div>
+        <button class="action-btn primary" onclick="showCartView()" id="nextBtn">
+            <span>➡️</span> <span data-en="Next" data-de="Weiter">Next</span>
         </button>
     </div>
 
-    <div class="footer-note" data-en="Tap any Copy button • Sentences go to clipboard" data-de="Tippe auf Kopieren • Sätze gehen in die Zwischenablage">
-        Tap any Copy button • Sentences go to clipboard
+    <div id="cartView" class="cart-view">
+        <div class="cart-header">
+            <h2 data-en="Your selected sentences (editable)" data-de="Ihre ausgewählten Sätze (bearbeitbar)">Your selected sentences (editable)</h2>
+            <button class="action-btn" onclick="hideCartView()"><span>⬅️</span> <span data-en="Back" data-de="Zurück">Back</span></button>
+        </div>
+        <div id="cartItemsContainer"></div>
+        <div class="cart-footer">
+            <button class="action-btn" onclick="clearCart()"><span>🗑️</span> <span data-en="Clear cart" data-de="Leeren">Clear cart</span></button>
+            <button class="action-btn primary" onclick="downloadPDF()"><span>📄</span> <span data-en="Download CV (PDF)" data-de="CV als PDF">Download CV (PDF)</span></button>
+        </div>
+        <div class="footer-note" style="margin-top:15px;" data-en="Edit any sentence • PDF will be formatted as a professional CV" data-de="Bearbeite Sätze • PDF wird als professioneller CV formatiert">Edit any sentence • PDF will be formatted as a professional CV</div>
     </div>
 
+    <div class="footer-note" id="mainFooter" data-en="Edit • Add to cart • Next → download CV-style PDF" data-de="Bearbeiten • Hinzufügen • Weiter → CV als PDF">Edit • Add to cart • Next → download CV-style PDF</div>
+
     <script>
-        let currentLanguage = 'en';
+        // ---------- CART (stores objects with text, tab, section) ----------
+        let cart = [];
 
-        function copyText(button) {
-            const sentenceDiv = button.parentElement.querySelector('.sentence-text');
-            const textToCopy = sentenceDiv.innerText;
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.length;
+            if (document.getElementById('cartView').classList.contains('active')) {
+                renderCartItems();
+            }
+        }
+
+        function addToCart(button) {
+            const card = button.closest('.sentence-card');
+            const textarea = card.querySelector('.sentence-text');
+            const sentence = textarea.value;
+            const tab = card.dataset.tab;
+            const section = card.dataset.section;
             
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                button.textContent = currentLanguage === 'en' ? 'Copied!' : 'Kopiert!';
-                button.classList.add('copied');
+            cart.push({ 
+                text: sentence,
+                tab: tab,
+                section: section
+            });
+            
+            button.innerText = (currentLanguage === 'en' ? 'Added!' : 'Hinzugefügt');
+            button.classList.add('added');
+            setTimeout(() => {
+                button.innerText = (currentLanguage === 'en' ? 'Add' : 'Hinzufügen');
+                button.classList.remove('added');
+            }, 600);
+            
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function clearCart() {
+            if (cart.length > 0 && confirm(currentLanguage === 'en' ? 'Remove all sentences from cart?' : 'Alle Sätze aus dem Warenkorb entfernen?')) {
+                cart = [];
+                updateCartUI();
+            }
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cartItemsContainer');
+            if (!container) return;
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color:#999; text-align:center; padding:20px;" data-en="Cart is empty" data-de="Warenkorb ist leer">${currentLanguage === 'en' ? 'Cart is empty' : 'Warenkorb ist leer'}</p>`;
+                return;
+            }
+            let html = '';
+            cart.forEach((item, idx) => {
+                html += `<div class="cart-item">
+                    <div class="cart-item-content">
+                        <textarea class="cart-item-text" onchange="updateCartItem(${idx}, this.value)">${item.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                        <button class="remove-btn" onclick="removeFromCart(${idx})">${currentLanguage === 'en' ? 'Remove' : 'Entfernen'}</button>
+                    </div>
+                    <div style="font-size:11px; color:#666; padding-left:8px;">
+                        ${item.section} (${item.tab})
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateCartItem(index, newText) {
+            cart[index].text = newText;
+        }
+
+        function resetSentence(button) {
+            const card = button.closest('.sentence-card');
+            const textarea = card.querySelector('.sentence-text');
+            const enText = textarea.getAttribute('data-en');
+            const deText = textarea.getAttribute('data-de');
+            
+            textarea.value = currentLanguage === 'en' ? enText : deText;
+            
+            button.innerText = '✓ Reset';
+            setTimeout(() => {
+                button.innerText = '↺ Reset';
+            }, 600);
+        }
+
+        function showCartView() {
+            document.getElementById('tabContainer').style.display = 'none';
+            document.getElementById('cartView').classList.add('active');
+            renderCartItems();
+        }
+
+        function hideCartView() {
+            document.getElementById('tabContainer').style.display = 'block';
+            document.getElementById('cartView').classList.remove('active');
+        }
+
+        // ---------- PDF generation (CV style) ----------
+        function downloadPDF() {
+            if (cart.length === 0) {
+                alert(currentLanguage === 'en' ? 'Cart is empty. Add some sentences first.' : 'Warenkorb ist leer. Füge zuerst Sätze hinzu.');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Helper to add text with wrapping
+            function addWrappedText(text, x, y, maxWidth, lineHeight) {
+                const lines = doc.splitTextToSize(text, maxWidth);
+                doc.text(lines, x, y);
+                return lines.length * lineHeight;
+            }
+
+            // CV Header
+            doc.setFontSize(22);
+            doc.setTextColor(0, 51, 102);
+            doc.text(currentLanguage === 'en' ? 'CURRICULUM VITAE' : 'LEBENSLAUF', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(100);
+            doc.text(currentLanguage === 'en' ? 'Your Name' : 'Ihr Name', 20, 30);
+            doc.text(currentLanguage === 'en' ? 'email@example.com · +49 123 456789' : 'email@example.com · +49 123 456789', 20, 36);
+            
+            let yPos = 50;
+            const leftMargin = 20;
+            const rightMargin = 190;
+            const maxWidth = 170;
+            const lineHeight = 7;
+
+            // Group cart items by section (preserve order, but group same sections)
+            const grouped = {};
+            cart.forEach(item => {
+                const key = item.section;
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(item.text);
+            });
+
+            // Loop through sections
+            for (let section in grouped) {
+                // Section title
+                doc.setFontSize(14);
+                doc.setTextColor(0, 123, 255);
+                doc.setFont(undefined, 'bold');
+                doc.text(section, leftMargin, yPos);
+                yPos += lineHeight + 2;
                 
-                setTimeout(() => {
-                    button.textContent = currentLanguage === 'en' ? 'Copy' : 'Kopieren';
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Copy failed:', err);
-                button.textContent = 'Error';
-                setTimeout(() => {
-                    button.textContent = currentLanguage === 'en' ? 'Copy' : 'Kopieren';
-                }, 2000);
-            });
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(11);
+                doc.setTextColor(50);
+                
+                // Section sentences
+                grouped[section].forEach(sentence => {
+                    if (yPos > 270) { // page break
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    const used = addWrappedText('• ' + sentence, leftMargin + 3, yPos, maxWidth - 5, lineHeight);
+                    yPos += used + 2;
+                });
+                
+                yPos += 4; // extra space between sections
+            }
+
+            // Footer
+            doc.setFontSize(10);
+            doc.setTextColor(150);
+            doc.text(currentLanguage === 'en' ? 'Generated with CV Builder' : 'Erstellt mit CV Builder', 20, 285);
+            
+            doc.save('my_cv.pdf');
         }
 
-        function switchTab(tabId) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected tab and activate button
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-            
-            // Scroll to top when switching tabs on mobile
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+        // ---------- LANGUAGE ----------
+        let currentLanguage = 'en';
 
         function setLanguage(lang) {
             currentLanguage = lang;
             
-            // Update slider position
             const slider = document.getElementById('langSlider');
             const langEn = document.getElementById('langEn');
             const langDe = document.getElementById('langDe');
-            
             if (lang === 'en') {
                 slider.className = 'lang-slider en';
                 langEn.classList.add('active');
@@ -577,47 +691,48 @@
                 langEn.classList.remove('active');
             }
             
-            // Update all text elements with data-en and data-de attributes
-            document.querySelectorAll('[data-en][data-de]').forEach(element => {
-                if (element.tagName === 'BUTTON' && element.classList.contains('copy-btn')) {
-                    // Skip copy buttons, they're handled separately
-                    return;
-                }
-                element.innerText = element.getAttribute(`data-${lang}`);
-            });
-            
-            // Update copy button texts
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                if (!btn.classList.contains('copied')) {
-                    btn.innerText = lang === 'en' ? 'Copy' : 'Kopieren';
+            document.querySelectorAll('.sentence-text').forEach(textarea => {
+                const enText = textarea.getAttribute('data-en');
+                const deText = textarea.getAttribute('data-de');
+                if (enText && deText) {
+                    textarea.value = lang === 'en' ? enText : deText;
                 }
             });
             
-            // Update subtitle
-            const subtitle = document.getElementById('subtitle');
-            if (lang === 'en') {
-                subtitle.innerText = 'Different tabs for different job types. Click copy to use sentences instantly!';
-            } else {
-                subtitle.innerText = 'Verschiedene Tabs für verschiedene Jobtypen. Klicke auf Kopieren, um Sätze sofort zu verwenden!';
-            }
+            document.querySelectorAll('[data-en][data-de]:not(textarea):not(.add-btn):not(.reset-btn)').forEach(el => {
+                el.innerText = el.getAttribute(`data-${lang}`);
+            });
             
-            // Update footer note
-            const footer = document.querySelector('.footer-note');
-            if (lang === 'en') {
-                footer.innerText = 'Tap any Copy button • Sentences go to clipboard';
-            } else {
-                footer.innerText = 'Tippe auf Kopieren • Sätze gehen in die Zwischenablage';
-            }
+            document.querySelectorAll('.add-btn').forEach(btn => {
+                if (!btn.classList.contains('added')) {
+                    btn.innerText = lang === 'en' ? 'Add' : 'Hinzufügen';
+                }
+            });
             
-            // Update back to top button
-            const backToTop = document.querySelector('.action-btn span:last-child');
-            if (backToTop) {
-                backToTop.innerText = lang === 'en' ? 'Back to top' : 'Nach oben';
-            }
+            document.querySelectorAll('.reset-btn').forEach(btn => {
+                btn.innerText = '↺ ' + (lang === 'en' ? 'Reset' : 'Zurücksetzen');
+            });
+            
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.innerText = lang === 'en' ? 'Remove' : 'Entfernen';
+            });
+            
+            const footer = document.getElementById('mainFooter');
+            footer.innerText = lang === 'en' ? 'Edit • Add to cart • Next → download CV-style PDF' : 'Bearbeiten • Hinzufügen • Weiter → CV als PDF';
+            
+            document.getElementById('subtitle').innerText = lang === 'en' ? 'Edit sentences • Add to cart • Next → download CV-style PDF' : 'Sätze bearbeiten • Hinzufügen • Weiter → CV als PDF';
         }
 
-        // Initialize with English
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
         setLanguage('en');
+        updateCartUI();
     </script>
 </body>
 </html>
