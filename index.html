@@ -405,20 +405,37 @@
             flex-wrap: wrap;
         }
 
-        /* Black & White CV Preview */
+        /* ========== BLACK & WHITE CV PREVIEW – FONT CONTROLS CENTRALIZED ========== */
         .cv-preview {
+            /* ----- FONT SIZE VARIABLES (adjust all CV fonts here) ----- */
+            --cv-name-size: 32px;
+            --cv-jobtitle-size: 16px;
+            --cv-contact-size: 13px;
+            --cv-section-title-size: 20px;
+            --cv-item-title-size: 15px;
+            --cv-item-subtitle-size: 13px;
+            --cv-item-date-size: 13px;
+            --cv-item-location-size: 13px;
+            --cv-description-size: 13px;
+            --cv-tag-size: 11px;
+
+            /* ----- FONT FAMILY VARIABLES ----- */
+            --cv-font-name: 'Times New Roman', serif;
+            --cv-font-section: 'Times New Roman', serif;
+            --cv-font-body: Arial, sans-serif;
+
+            /* Layout & appearance */
             background: white;
             padding: 40px;
-            margin: 30px auto;        /* center horizontally */
+            margin: 30px auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            font-family: 'Lato', 'Arial', sans-serif;
+            font-family: var(--cv-font-body);
             display: none;
-            width: 800px;              /* fixed width to match PDF */
+            width: 800px;
             max-width: 100%;
             box-sizing: border-box;
             filter: grayscale(100%);
         }
-        
         .cv-preview.active {
             display: block;
         }
@@ -433,19 +450,19 @@
         }
         
         .cv-name-title h1 {
-            font-family: 'Times New Roman', serif;
-            font-size: 36px;
+            font-family: var(--cv-font-name);
+            font-size: var(--cv-name-size);
             color: #000000 !important;
             background: none !important;
-            -webkit-text-fill-color: #000000 !important;  /* override gradient */
+            -webkit-text-fill-color: #000000 !important;
             margin: 0;
             padding: 0;
             font-weight: 700;
         }
         
-        .cv-name-title h2 {
-            font-family: 'Arial', sans-serif;
-            font-size: 18px;
+        #cvJobRoleDisplay {
+            font-family: var(--cv-font-body);
+            font-size: var(--cv-jobtitle-size);
             color: #333;
             margin: 5px 0 0 0;
             font-weight: 400;
@@ -470,8 +487,9 @@
             padding: 15px;
             margin-bottom: 25px;
             border-left: 4px solid #000;
-            font-size: 14px;
+            font-size: var(--cv-contact-size);
             color: #000;
+            font-family: var(--cv-font-body);
         }
         
         .cv-section {
@@ -479,8 +497,8 @@
         }
         
         .cv-section-title {
-            font-family: 'Times New Roman', serif;
-            font-size: 22px;
+            font-family: var(--cv-font-section);
+            font-size: var(--cv-section-title-size);
             color: #000;
             border-bottom: 1px solid #000;
             padding-bottom: 5px;
@@ -500,33 +518,37 @@
         }
         
         .cv-item-title {
+            font-family: var(--cv-font-body);
             font-weight: 700;
             color: #000;
-            font-size: 16px;
+            font-size: var(--cv-item-title-size);
         }
         
         .cv-item-subtitle {
+            font-family: var(--cv-font-body);
             color: #333;
             font-style: italic;
-            font-size: 14px;
+            font-size: var(--cv-item-subtitle-size);
         }
         
         .cv-item-location {
+            font-family: var(--cv-font-body);
             color: #666;
-            font-size: 13px;
+            font-size: var(--cv-item-location-size);
             margin-left: 10px;
         }
         
         .cv-item-date {
+            font-family: var(--cv-font-body);
             color: #333;
-            font-size: 14px;
+            font-size: var(--cv-item-date-size);
         }
         
         .cv-item-description {
             margin-top: 8px;
             padding-left: 20px;
             color: #000;
-            font-size: 14px;
+            font-size: var(--cv-description-size);
         }
         
         .cv-item-description ul {
@@ -536,6 +558,7 @@
         .cv-item-description li {
             margin-bottom: 5px;
             position: relative;
+            font-family: var(--cv-font-body);
         }
         
         .cv-item-description li:before {
@@ -558,8 +581,9 @@
             color: #000;
             padding: 4px 12px;
             border-radius: 15px;
-            font-size: 12px;
+            font-size: var(--cv-tag-size);
             border: 1px solid #ccc;
+            font-family: var(--cv-font-body);
         }
 
         .footer-note {
