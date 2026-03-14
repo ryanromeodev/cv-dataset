@@ -623,6 +623,10 @@
             <button class="action-btn" onclick="clearCart()">
                 <span>🗑️</span> <span data-en="Clear cart" data-de="Warenkorb leeren">Clear cart</span>
             </button>
+            <!-- ADD ALL BUTTON -->
+            <button class="action-btn" onclick="addAllToCart()">
+                <span>➕</span> <span data-en="Add all" data-de="Alle hinzufügen">Add all</span>
+            </button>
             <div style="flex:1; text-align:right;">
                 <span class="cart-badge" id="cartCount">0</span>
             </div>
@@ -962,6 +966,51 @@
             updateCartUI();
         }
 
+        function addAllToCart() {
+            const cards = document.querySelectorAll('.sentence-card');
+            let addedCount = 0;
+
+            cards.forEach(card => {
+                const textarea = card.querySelector('.sentence-text');
+                const sentence = textarea.value;
+                const section = card.dataset.section;
+
+                const item = {
+                    text: sentence,
+                    section: section,
+                    parentId: card.dataset.parentId,
+                    parentTitleEn: card.dataset.parentTitleEn,
+                    parentTitleDe: card.dataset.parentTitleDe,
+                    companyEn: card.dataset.companyEn,
+                    companyDe: card.dataset.companyDe,
+                    dateEn: card.dataset.dateEn,
+                    dateDe: card.dataset.dateDe,
+                    locationEn: card.dataset.locationEn,
+                    locationDe: card.dataset.locationDe
+                };
+
+                // Avoid duplicates (same text, same parent, same section)
+                const exists = cart.some(cartItem =>
+                    cartItem.text === item.text &&
+                    cartItem.parentId === item.parentId &&
+                    cartItem.section === item.section
+                );
+
+                if (!exists) {
+                    cart.push(item);
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                alert(addedCount + ' ' + (currentLanguage === 'en' ? 'sentences added' : 'Sätze hinzugefügt'));
+            } else {
+                alert(currentLanguage === 'en' ? 'All sentences already in cart' : 'Alle Sätze bereits im Warenkorb');
+            }
+
+            updateCartUI();   // refresh cart count and cart view if open
+        }
+
         function removeFromCart(index) {
             cart.splice(index, 1);
             updateCartUI();
@@ -1040,10 +1089,10 @@
                 }
                 
                 if (item.parentId) {
-                    // Bullet belongs to a parent (job/degree/project)
-                    const parentId = item.parentId;
-                    if (!sections[section].jobs[parentId]) {
-                        sections[section].jobs[parentId] = {
+                    // This bullet belongs to a job/degree/project
+                    const jobId = item.parentId;
+                    if (!sections[section].jobs[jobId]) {
+                        sections[section].jobs[jobId] = {
                             titleEn: item.parentTitleEn,
                             titleDe: item.parentTitleDe,
                             companyEn: item.companyEn,
@@ -1055,9 +1104,9 @@
                             bullets: []
                         };
                     }
-                    sections[section].jobs[parentId].bullets.push(item.text);
+                    sections[section].jobs[jobId].bullets.push(item.text);
                 } else {
-                    // Standalone item (skills, languages)
+                    // Standalone item (skills, languages, projects without parent)
                     sections[section].items.push(item.text);
                 }
             });
@@ -1074,7 +1123,7 @@
                     <div class="cv-section-title">${section}</div>`;
                 
                 if (section === 'Work Experience' || section === 'Education') {
-                    // Standard job/education display with company, date, location
+                    // For each job/degree in this section
                     const jobs = sections[section].jobs;
                     for (let jobId in jobs) {
                         const job = jobs[jobId];
@@ -1128,7 +1177,7 @@
                         html += `<div class="cv-tags"><span class="cv-tag">${item}</span></div>`;
                     });
                 } else {
-                    // Languages (or any other) as bullet list
+                    // Languages as bullet list
                     html += `<div class="cv-item"><div class="cv-item-description"><ul>`;
                     sections[section].items.forEach(item => {
                         html += `<li>${item}</li>`;
