@@ -587,6 +587,7 @@
             margin: 10px 0;
         }
         
+        /* ===== SKILLS CHIPS – MINIMAL SPACING, NO OVERFLOW ===== */
         .cv-tag {
             background: #f0f0f0;
             color: #000;
@@ -595,6 +596,25 @@
             font-size: var(--cv-tag-size);
             border: 1px solid #ccc;
             font-family: var(--cv-font-body);
+            /* Make chip only as wide as its content */
+            width: fit-content;
+            display: inline-block;
+            /* Prevent overflow and wrap long text */
+            max-width: 100%;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            text-align: center;  /* center text inside chip */
+        }
+
+        /* Two‑column grid for skills with minimal gap */
+        .cv-skills-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;               /* minimal spacing */
+            margin: 10px 0;
+            justify-items: center;   /* center chips horizontally */
+            align-items: start;      /* keep chips top-aligned (optional) */
         }
 
         .footer-note {
@@ -1202,10 +1222,12 @@
                         html += `</ul></div></div>`;
                     }
                 } else if (section === 'Skills') {
-                    // Skills as tags
+                    // Skills as chips in a two-column grid with minimal gap
+                    html += `<div class="cv-skills-grid">`;
                     sections[section].items.forEach(item => {
-                        html += `<div class="cv-tags"><span class="cv-tag">${item}</span></div>`;
+                        html += `<span class="cv-tag">${item}</span>`;
                     });
+                    html += `</div>`;
                 } else {
                     // Languages as bullet list
                     html += `<div class="cv-item"><div class="cv-item-description"><ul>`;
