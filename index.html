@@ -422,7 +422,7 @@
             /* ----- FONT FAMILY VARIABLES ----- */
             --cv-font-name: 'Times New Roman', serif;
             --cv-font-section: 'Times New Roman', serif;
-            --cv-font-body: Arial, sans-serif;
+            --cv-font-body: 'Times New Roman', Arial, sans-serif;
 
             /* Layout & appearance */
             background: white;
@@ -445,13 +445,18 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 20px;
         }
         
+        .cv-left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         .cv-name-title h1 {
             font-family: var(--cv-font-name);
             font-size: var(--cv-name-size);
+            text-transform: uppercase;
             color: #000000 !important;
             background: none !important;
             -webkit-text-fill-color: #000000 !important;
@@ -464,9 +469,9 @@
             font-family: var(--cv-font-body);
             font-size: var(--cv-jobtitle-size);
             color: #333;
-            margin: 5px 0 0 0;
-            font-weight: 400;
-            font-style: italic;
+            margin: 0;
+            font-weight: 600;
+            font-style: normal;
         }
         
         .cv-photo {
@@ -479,17 +484,23 @@
             justify-content: center;
             color: #666;
             font-size: 12px;
-            border: 2px solid #000;
+            overflow: hidden;
         }
         
         .cv-contact {
-            background: #f9f9f9;
-            padding: 15px;
-            margin-bottom: 25px;
-            border-left: 4px solid #000;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
             font-size: var(--cv-contact-size);
-            color: #000;
+            color: #555;
             font-family: var(--cv-font-body);
+            margin-top: 5px;
+        }
+
+        .cv-contact span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .cv-section {
@@ -670,19 +681,20 @@
 
         <div id="cvPreview" class="cv-preview">
             <div class="cv-header">
-                <div class="cv-name-title">
-                    <h1>Ryan Romeo</h1>
-                    <h2 id="cvJobRoleDisplay">Electronics Engineer</h2>
+                <div class="cv-left-col">
+                    <div class="cv-name-title">
+                        <h1>Ryan Romeo</h1>
+                        <h2 id="cvJobRoleDisplay">Electronics Engineer</h2>
+                    </div>
+                    <div class="cv-contact">
+                        <span>✉ ryanromeo10@gmail.com</span>
+                        <span>📞 (+49) 15 212 669675</span>
+                        <span>📍 Luisental 29B, Bremen, 28359 Germany</span>
+                    </div>
                 </div>
                 <div class="cv-photo" id="photoPlaceholder">
                     <span>📷 Photo</span>
                 </div>
-            </div>
-            
-            <div class="cv-contact">
-                <span style="margin-right: 20px;">📧 ryanromeo10@gmail.com</span>
-                <span style="margin-right: 20px;">📞 (+49) 15 212 669675</span>
-                <span>📍 Luisental 29B, Bremen, 28359 Germany</span>
             </div>
             
             <div id="cvContent"></div>
@@ -1255,7 +1267,7 @@
                 const pdfHeight = pdf.internal.pageSize.getHeight(); // 841.89 pt
                 
                 // Define a consistent margin (in points)
-                const margin = 15; // Set this to whatever small margin you prefer
+                const margin = 5; // Set this to whatever small margin you prefer
 
                 // Maximum available width/height after margins
                 const maxWidth = pdfWidth - 2 * margin;
