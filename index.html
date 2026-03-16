@@ -562,23 +562,20 @@
             color: #000;
             font-size: var(--cv-description-size);
         }
-        
+
         .cv-item-description ul {
-            list-style-type: none;
+            font-family: var(--cv-font-body);
+            list-style-type: disc;  /* Changed from 'none' to 'disc' */
+            padding-left: 20px;      /* Add padding for bullets */
+            margin-left: 0;
+            font-size: var(--cv-description-size);
         }
-        
+
         .cv-item-description li {
             margin-bottom: 5px;
-            position: relative;
             font-family: var(--cv-font-body);
-        }
-        
-        .cv-item-description li:before {
-            content: "•";
-            color: #000;
-            font-weight: bold;
-            position: absolute;
-            left: -15px;
+            display: list-item;      /* Ensure proper list item display */
+            font-size: var(--cv-description-size);
         }
         
         .cv-tags {
